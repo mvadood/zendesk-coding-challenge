@@ -1,4 +1,4 @@
-package zendesk;
+package com.zendesk;
 
 public class Main {
 
