@@ -23,7 +23,7 @@ public class User extends Entity{
   private String email;
   private String phone;
   private String signature;
-  private int organizationId;
+  private String organizationId;
   private List<String> tags;
   private boolean suspended;
   private String role;

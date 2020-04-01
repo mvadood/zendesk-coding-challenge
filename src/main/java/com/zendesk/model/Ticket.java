@@ -18,9 +18,9 @@ public class Ticket extends Entity{
   private String description;
   private String priority;
   private String status;
-  private long submitterId;
-  private long assigneeId;
-  private long organizationId;
+  private String submitterId;
+  private String assigneeId;
+  private String organizationId;
   private List<String> tags;
   private boolean hasIncidents;
   private ZonedDateTime dueAt;
