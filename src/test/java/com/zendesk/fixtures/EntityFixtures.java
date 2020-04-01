@@ -36,7 +36,7 @@ public class EntityFixtures {
 
     ticket = new Ticket();
     ticket.setId("14");
-    ticket.setAssigneeId(1);
+    ticket.setAssigneeId("1");
     ticket.setCreatedAt(ZonedDateTime.of(2018, 1, 11, 12, 0, 0, 0, ZoneId.of("Australia/Darwin")));
     ticket.setHasIncidents(true);
   }
