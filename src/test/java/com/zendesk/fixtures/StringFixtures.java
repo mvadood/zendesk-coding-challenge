@@ -1,11 +1,11 @@
-package fixtures;
+package com.zendesk.fixtures;
 
-public class Fixtures {
+public class StringFixtures {
 
-  private Fixtures() {
+  private StringFixtures() {
   }
 
-  public static final String USER = "{\n"
+  public static final String USER_STR = "{\n"
       + "    \"_id\": 1,\n"
       + "    \"url\": \"http://initech.zendesk.com/api/v2/users/1.json\",\n"
       + "    \"external_id\": \"74341f74-9c79-49d5-9611-87ef9b6eb75f\",\n"
@@ -31,7 +31,7 @@ public class Fixtures {
       + "    \"suspended\": true,\n"
       + "    \"role\": \"admin\"\n"
       + "  }";
-  public static final String ORGANIZATION = "{\n"
+  public static final String ORG_STR = "{\n"
       + "    \"_id\": 101,\n"
       + "    \"url\": \"http://initech.zendesk.com/api/v2/organizations/101.json\",\n"
       + "    \"external_id\": \"9270ed79-35eb-4a38-a46f-35725197ea8d\",\n"
@@ -52,7 +52,7 @@ public class Fixtures {
       + "      \"Farley\"\n"
       + "    ]\n"
       + "  }";
-  public static final String TICKET = "{\n"
+  public static final String TICKET_STR = "{\n"
       + "    \"_id\": \"436bf9b0-1147-4c0a-8439-6f79833bff5b\",\n"
       + "    \"url\": \"http://initech.zendesk.com/api/v2/tickets/436bf9b0-1147-4c0a-8439-6f79833bff5b.json\",\n"
       + "    \"external_id\": \"9210cdc9-4bee-485f-a078-35396cd74063\",\n"

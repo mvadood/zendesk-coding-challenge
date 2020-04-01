@@ -1,15 +1,14 @@
 package com.zendesk.model;
 
-import com.google.gson.annotations.SerializedName;
 import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class User {
+public class User extends Entity{
 
-  @SerializedName("_id")
-  private long id;
   private String url;
   private String externalId;
   private String name;

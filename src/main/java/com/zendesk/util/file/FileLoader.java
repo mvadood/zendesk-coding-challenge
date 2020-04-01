@@ -6,6 +6,6 @@ import java.util.Iterator;
 
 public abstract class FileLoader<T> {
 
-  public abstract Iterator<T> getObjectIterator(String filePath, Type typeOfT)
+  public abstract Iterator<T> getIterator(String filePath, Type typeOfT)
       throws IOException;
 }

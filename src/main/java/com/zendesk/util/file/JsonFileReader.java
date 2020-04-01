@@ -1,9 +1,7 @@
 package com.zendesk.util.file;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
-import com.zendesk.model.User;
 import com.zendesk.util.GsonProvider;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -23,7 +21,7 @@ public class JsonFileReader<T> extends FileLoader<T> {
   }
 
   @Override
-  public Iterator getObjectIterator(String filePath, Type typeOfT)
+  public Iterator<T> getIterator(String filePath, Type typeOfT)
       throws IOException {
     InputStream inputStream = new FileInputStream(filePath);
     JsonReader reader = new JsonReader(new InputStreamReader(inputStream,

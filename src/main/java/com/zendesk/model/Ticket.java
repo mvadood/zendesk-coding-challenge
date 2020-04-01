@@ -4,12 +4,12 @@ import com.google.gson.annotations.SerializedName;
 import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class Ticket {
+public class Ticket extends Entity{
 
-  @SerializedName("_id")
-  private String id;
   private String url;
   private String externalId;
   private ZonedDateTime createdAt;
