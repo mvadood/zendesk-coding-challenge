@@ -6,28 +6,47 @@ import static junit.framework.TestCase.assertTrue;
 import com.zendesk.exception.NoOrgsFoundException;
 import com.zendesk.exception.NoTicketsFoundException;
 import com.zendesk.fixtures.EntityFixtures;
+import com.zendesk.model.Organization;
 import com.zendesk.model.Ticket;
+import com.zendesk.model.User;
+import com.zendesk.util.GsonProvider;
 import com.zendesk.util.TestConstants;
 import com.zendesk.util.file.JsonFileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.junit.Before;
+import org.junit.After;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {JsonFileReader.class, ReverseIndexRepository.class, GsonProvider.class})
 public class ReverseIndexRepositoryTests {
+
+  @Autowired
+  JsonFileReader<User> usersJsonFileReader;
+
+  @Autowired
+  JsonFileReader<Organization> orgsJsonFileReader;
+
+  @Autowired
+  JsonFileReader<Ticket> ticketsJsonFileReader;
+
+  @Autowired
+  ReverseIndexRepository reverseIndexRepository;
 
   private static final String ID_FIELD = "id";
   private static final String URL_FIELD = "url";
   private static final String TAGS_FIELD = "tags";
   private static final String SUBJECT_FIELD = "subject";
 
-  private ReverseIndexRepository reverseIndexRepository;
-
-  @Before
-  public void instantiateReverseIndex() {
-    reverseIndexRepository = new ReverseIndexRepository(new JsonFileReader());
+  @After
+  public void cleanRepository(){
+    reverseIndexRepository.clear();
   }
 
   @Test

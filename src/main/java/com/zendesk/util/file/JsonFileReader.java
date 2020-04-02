@@ -1,6 +1,5 @@
 package com.zendesk.util.file;
 
-import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import com.zendesk.util.GsonProvider;
 import java.io.FileInputStream;
@@ -11,13 +10,19 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
+@Component
+@Scope("prototype")
 public class JsonFileReader<T> extends FileLoader<T> {
 
-  private Gson gson;
+  private final GsonProvider gsonProvider;
 
-  public JsonFileReader() {
-    this.gson = GsonProvider.getInstance();
+  @Autowired
+  public JsonFileReader(GsonProvider gsonProvider) {
+    this.gsonProvider = gsonProvider;
   }
 
   @Override
@@ -45,7 +50,7 @@ public class JsonFileReader<T> extends FileLoader<T> {
 
       @Override
       public T next() {
-        return gson.fromJson(reader, typeOfT);
+        return gsonProvider.getGson().fromJson(reader, typeOfT);
       }
     };
 

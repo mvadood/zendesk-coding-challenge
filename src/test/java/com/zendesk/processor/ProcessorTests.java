@@ -9,17 +9,31 @@ import com.zendesk.model.response.OrgResponseItem;
 import com.zendesk.model.response.Response;
 import com.zendesk.model.response.TicketResponseItem;
 import com.zendesk.model.response.UserResponseItem;
+import com.zendesk.repository.ReverseIndexRepository;
 import com.zendesk.util.Constants;
+import com.zendesk.util.GsonProvider;
 import com.zendesk.util.TestConstants;
+import com.zendesk.util.file.JsonFileReader;
 import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {ReverseIndexRepository.class, Processor.class, GsonProvider.class, JsonFileReader.class})
 public class ProcessorTests {
 
+  @Autowired
   private Processor processor;
+
+  @Autowired
+  ReverseIndexRepository reverseIndexRepository;
 
   public static final String ROLE_FIELD = "role";
   public static final String CREATED_AT_FIELD = "createdAt";
@@ -27,12 +41,17 @@ public class ProcessorTests {
 
   @Before
   public void loadUpProcessor() throws IOException {
-    processor = new Processor();
+    processor = new Processor(reverseIndexRepository);
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
     processor.loadUpRepo(classLoader.getResource(TestConstants.USERS_FILE_PATH).getPath(),
         classLoader.getResource(TestConstants.ORGS_FILE_PATH).getPath(),
         classLoader.getResource(TestConstants.TICKETS_FILE_PATH).getPath());
+  }
+
+  @After
+  public void cleanRepository(){
+    reverseIndexRepository.clear();
   }
 
 

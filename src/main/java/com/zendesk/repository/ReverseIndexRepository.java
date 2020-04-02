@@ -10,7 +10,7 @@ import com.zendesk.model.Entity;
 import com.zendesk.model.Organization;
 import com.zendesk.model.Ticket;
 import com.zendesk.model.User;
-import com.zendesk.util.file.FileLoader;
+import com.zendesk.util.file.JsonFileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -19,7 +19,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class ReverseIndexRepository {
 
   private Map<String, User> users;
@@ -30,17 +33,33 @@ public class ReverseIndexRepository {
   private Map<String, Map<Object, List<String>>> ticketsIndex;
   private Map<String, Map<Object, List<String>>> orgsIndex;
 
-  private FileLoader fileLoader;
-  ObjectMapper objectMapper = new ObjectMapper();
+
+  private final JsonFileReader<User> usersfileLoader;
+  private final JsonFileReader<Organization> orgsfileLoader;
+  private final JsonFileReader<Ticket> ticketsfileLoader;
+
+  private ObjectMapper objectMapper;
 
   private static final String ID_FIELD_NAME = "id";
   private static final String ORGANIZATION_ID_FIELD_NAME = "organizationId";
   private static final String SUBMITTER_ID_FIELD_NAME = "submitterId";
   private static final String ASSIGNEE_ID_FIELD_NAME = "assigneeId";
 
-  public ReverseIndexRepository(FileLoader fileLoader) {
-    this.fileLoader = fileLoader;
+  @Autowired
+  public ReverseIndexRepository(
+      JsonFileReader<User> usersfileLoader,
+      JsonFileReader<Organization> orgsfileLoader,
+      JsonFileReader<Ticket> ticketsfileLoader) {
+    this.usersfileLoader = usersfileLoader;
+    this.orgsfileLoader = orgsfileLoader;
+    this.ticketsfileLoader = ticketsfileLoader;
 
+    clear();
+    objectMapper = new ObjectMapper();
+    objectMapper.registerModule(new JavaTimeModule());
+  }
+
+  public void clear() {
     users = new HashMap<>();
     tickets = new HashMap<>();
     organizations = new HashMap<>();
@@ -48,16 +67,14 @@ public class ReverseIndexRepository {
     usersIndex = new HashMap<>();
     orgsIndex = new HashMap<>();
     ticketsIndex = new HashMap<>();
-
-    objectMapper.registerModule(new JavaTimeModule());
   }
 
   public void loadIndex(String usersFilePath, String orgsFilePath,
       String ticketsFilePath) throws IOException {
-    Iterator<User> usersIterator = fileLoader.getIterator(usersFilePath, User.class);
-    Iterator<Organization> orgsIterator = fileLoader
+    Iterator<User> usersIterator = usersfileLoader.getIterator(usersFilePath, User.class);
+    Iterator<Organization> orgsIterator = orgsfileLoader
         .getIterator(orgsFilePath, Organization.class);
-    Iterator<Ticket> ticketsIterator = fileLoader.getIterator(ticketsFilePath, Ticket.class);
+    Iterator<Ticket> ticketsIterator = ticketsfileLoader.getIterator(ticketsFilePath, Ticket.class);
 
     populateMaps(usersIterator, users, usersIndex);
     populateMaps(orgsIterator, organizations, orgsIndex);

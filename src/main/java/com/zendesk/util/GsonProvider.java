@@ -6,26 +6,22 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import lombok.Getter;
+import org.springframework.stereotype.Component;
 
+@Component
 public class GsonProvider {
 
-  private static Gson instance;
+  @Getter
+  private Gson gson;
 
-  private GsonProvider() {
-  }
-
-  public static Gson getInstance() {
-    synchronized (GsonProvider.class) {
-      if (instance == null) {
-        instance = new GsonBuilder()
-            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-            .registerTypeAdapter(ZonedDateTime.class,
-                (JsonDeserializer<ZonedDateTime>) (json, type, jsonDeserializationContext) ->
-                    ZonedDateTime.parse(json.getAsJsonPrimitive().getAsString(),
-                        DateTimeFormatter.ofPattern(Constants.DATE_FORMAT)))
-            .create();
-      }
-      return instance;
-    }
+  public GsonProvider() {
+    gson = new GsonBuilder()
+        .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+        .registerTypeAdapter(ZonedDateTime.class,
+            (JsonDeserializer<ZonedDateTime>) (json, type, jsonDeserializationContext) ->
+                ZonedDateTime.parse(json.getAsJsonPrimitive().getAsString(),
+                    DateTimeFormatter.ofPattern(Constants.DATE_FORMAT)))
+        .create();
   }
 }

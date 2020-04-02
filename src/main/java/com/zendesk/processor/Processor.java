@@ -11,19 +11,22 @@ import com.zendesk.model.response.Response;
 import com.zendesk.model.response.TicketResponseItem;
 import com.zendesk.model.response.UserResponseItem;
 import com.zendesk.repository.ReverseIndexRepository;
-import com.zendesk.util.file.JsonFileReader;
 import java.io.IOException;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class Processor {
 
-  ReverseIndexRepository reverseIndexRepository;
+  private final ReverseIndexRepository reverseIndexRepository;
   public static final String DEFAULT_USERS_FILE_PATH = "users.json";
   public static final String DEFAULT_ORGS_FILE_PATH = "organizations.json";
   public static final String DEFAULT_TICKETS_FILE_PATH = "tickets.json";
 
-  public Processor() {
-    this.reverseIndexRepository = new ReverseIndexRepository(new JsonFileReader());
+  @Autowired
+  public Processor(ReverseIndexRepository reverseIndexRepository) {
+    this.reverseIndexRepository = reverseIndexRepository;
   }
 
 
