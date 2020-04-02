@@ -20,19 +20,14 @@ import org.springframework.stereotype.Component;
 public class Processor {
 
   private final ReverseIndexRepository reverseIndexRepository;
-  public static final String DEFAULT_USERS_FILE_PATH = "users.json";
-  public static final String DEFAULT_ORGS_FILE_PATH = "organizations.json";
-  public static final String DEFAULT_TICKETS_FILE_PATH = "tickets.json";
 
   @Autowired
   public Processor(ReverseIndexRepository reverseIndexRepository) {
     this.reverseIndexRepository = reverseIndexRepository;
   }
 
-
-  public void loadUpRepo()
-      throws IOException {
-    loadUpRepo(DEFAULT_USERS_FILE_PATH, DEFAULT_ORGS_FILE_PATH, DEFAULT_TICKETS_FILE_PATH);
+  public void clear(){
+    reverseIndexRepository.clear();
   }
 
   public void loadUpRepo(String usersFilePath, String orgsFilePath, String ticketsFilePath)
