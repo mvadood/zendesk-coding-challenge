@@ -12,6 +12,7 @@ import com.zendesk.model.Ticket;
 import com.zendesk.model.User;
 import com.zendesk.util.file.FileLoader;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -93,6 +94,9 @@ public class ReverseIndexRepository {
       Map<String, Map<Object, List<String>>> index) {
     if (value instanceof String) {
       value = value.toString().trim().toLowerCase();
+    }
+    if (value instanceof BigDecimal) {
+      value = ((BigDecimal) value).longValue();
     }
     index.get(key).computeIfAbsent(value, k -> new LinkedList<>());
     index.get(key).get(value).add(entity.getId());

@@ -3,8 +3,13 @@ package com.zendesk.repository;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 
+import com.zendesk.exception.NoOrgsFoundException;
+import com.zendesk.exception.NoTicketsFoundException;
 import com.zendesk.fixtures.EntityFixtures;
+import com.zendesk.model.Ticket;
+import com.zendesk.util.TestConstants;
 import com.zendesk.util.file.JsonFileReader;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +19,9 @@ import org.junit.Test;
 public class ReverseIndexRepositoryTests {
 
   private static final String ID_FIELD = "id";
+  private static final String URL_FIELD = "url";
   private static final String TAGS_FIELD = "tags";
+  private static final String SUBJECT_FIELD = "subject";
 
   private ReverseIndexRepository reverseIndexRepository;
 
@@ -28,9 +35,9 @@ public class ReverseIndexRepositoryTests {
     Map<String, Object> entityKeyValues = reverseIndexRepository
         .buildEntityKeyValues(EntityFixtures.user);
 
-    assertTrue(entityKeyValues.containsKey("id"));
-    assertTrue(entityKeyValues.containsKey("url"));
-    assertTrue(entityKeyValues.containsKey("tags"));
+    assertTrue(entityKeyValues.containsKey(ID_FIELD));
+    assertTrue(entityKeyValues.containsKey(URL_FIELD));
+    assertTrue(entityKeyValues.containsKey(TAGS_FIELD));
   }
 
 
@@ -58,6 +65,41 @@ public class ReverseIndexRepositoryTests {
     assertEquals(1,
         index.get(TAGS_FIELD).get(EntityFixtures.user.getTags().get(1).trim().toLowerCase())
             .size());
+  }
+
+  @Test
+  public void searchTicketBySubjectShouldReturn1() throws IOException, NoTicketsFoundException {
+    loadUpIndex(reverseIndexRepository);
+
+    List<Ticket> tickets = reverseIndexRepository
+        .searchTicket(SUBJECT_FIELD, "A Catastrophe in Korea (North)".toLowerCase());
+
+    assertEquals(1, tickets.size());
+  }
+
+  @Test
+  public void searchTicketByTagShouldReturn14() throws IOException, NoTicketsFoundException {
+    loadUpIndex(reverseIndexRepository);
+
+    List<Ticket> tickets = reverseIndexRepository
+        .searchTicket(TAGS_FIELD, "Pennsylvania".toLowerCase());
+
+    assertEquals(14, tickets.size());
+  }
+
+  @Test(expected = NoOrgsFoundException.class)
+  public void shouldThrowNoOrgsFoundException() throws IOException, NoOrgsFoundException {
+    loadUpIndex(reverseIndexRepository);
+    reverseIndexRepository.searchOrgById("imaginary_id");
+  }
+
+  private void loadUpIndex(ReverseIndexRepository reverseIndexRepository) throws IOException {
+    ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+    reverseIndexRepository
+        .loadIndex(classLoader.getResource(TestConstants.USERS_FILE_PATH).getPath(),
+            classLoader.getResource(TestConstants.ORGS_FILE_PATH).getPath(),
+            classLoader.getResource(TestConstants.TICKETS_FILE_PATH).getPath());
+
   }
 
 }
