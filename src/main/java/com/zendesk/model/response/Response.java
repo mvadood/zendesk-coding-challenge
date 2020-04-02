@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import lombok.Getter;
 
-public class Response<T> {
+public class Response<T extends ResponseItem> {
 
   @Getter
   List<T> responseItems = new LinkedList<>();

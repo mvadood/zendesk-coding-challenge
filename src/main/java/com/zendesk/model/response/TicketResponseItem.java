@@ -1,12 +1,13 @@
 package com.zendesk.model.response;
 
-import com.zendesk.model.Organization;
-import com.zendesk.model.Ticket;
-import com.zendesk.model.User;
+import com.zendesk.model.entity.Organization;
+import com.zendesk.model.entity.Ticket;
+import com.zendesk.model.entity.User;
 import lombok.Data;
 
 @Data
-public class TicketResponseItem{
+public class TicketResponseItem extends ResponseItem {
+
   Ticket ticket;
   User assignee;
   User submitter;

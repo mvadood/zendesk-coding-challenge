@@ -57,6 +57,18 @@
       <artifactId>spring-boot-starter</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>de.vandermeer</groupId>
+      <artifactId>asciitable</artifactId>
+      <version>0.3.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>28.2-jre</version>
+    </dependency>
+
     <!--Test Dependencies-->
 
     <!-- https://mvnrepository.com/artifact/junit/junit -->

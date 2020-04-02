@@ -1,8 +1,8 @@
 package com.zendesk.fixtures;
 
-import com.zendesk.model.Organization;
-import com.zendesk.model.Ticket;
-import com.zendesk.model.User;
+import com.zendesk.model.entity.Organization;
+import com.zendesk.model.entity.Ticket;
+import com.zendesk.model.entity.User;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.LinkedList;

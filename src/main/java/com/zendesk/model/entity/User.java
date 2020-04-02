@@ -1,4 +1,4 @@
-package com.zendesk.model;
+package com.zendesk.model.entity;
 
 import java.time.ZonedDateTime;
 import java.util.List;

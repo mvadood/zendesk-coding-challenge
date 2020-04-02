@@ -6,9 +6,9 @@ import static org.junit.Assert.assertNotNull;
 
 import com.google.gson.Gson;
 import com.zendesk.fixtures.StringFixtures;
-import com.zendesk.model.Organization;
-import com.zendesk.model.Ticket;
-import com.zendesk.model.User;
+import com.zendesk.model.entity.Organization;
+import com.zendesk.model.entity.Ticket;
+import com.zendesk.model.entity.User;
 import java.time.format.DateTimeFormatter;
 import org.junit.Test;
 import org.junit.runner.RunWith;

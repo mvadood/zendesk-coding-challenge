@@ -1,6 +1,5 @@
-package com.zendesk.model;
+package com.zendesk.model.entity;
 
-import com.google.gson.annotations.SerializedName;
 import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.Data;

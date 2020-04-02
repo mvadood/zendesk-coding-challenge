@@ -2,9 +2,9 @@ package com.zendesk.util.file;
 
 import static junit.framework.TestCase.assertEquals;
 
-import com.zendesk.model.Organization;
-import com.zendesk.model.Ticket;
-import com.zendesk.model.User;
+import com.zendesk.model.entity.Organization;
+import com.zendesk.model.entity.Ticket;
+import com.zendesk.model.entity.User;
 import com.zendesk.util.GsonProvider;
 import com.zendesk.util.TestConstants;
 import java.io.IOException;
