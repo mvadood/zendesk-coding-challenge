@@ -1,5 +1,7 @@
 package com.zendesk.view;
 
+import static java.lang.Math.*;
+
 import com.zendesk.exception.NoOrgsFoundException;
 import com.zendesk.exception.NoTicketsFoundException;
 import com.zendesk.exception.NoUsersFoundException;
@@ -9,12 +11,17 @@ import com.zendesk.exception.input.NotSupportedFieldException;
 import com.zendesk.model.entity.Organization;
 import com.zendesk.model.entity.Ticket;
 import com.zendesk.model.entity.User;
+import com.zendesk.model.request.OrganizationField;
+import com.zendesk.model.request.TicketField;
+import com.zendesk.model.request.UserField;
 import com.zendesk.model.response.Response;
 import com.zendesk.model.response.ResponseItem;
 import com.zendesk.processor.Processor;
 import com.zendesk.view.presentation.ResponseDrawer;
+import de.vandermeer.asciitable.AsciiTable;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -68,6 +75,54 @@ public class ShellCommands {
     return "Great! Index was loaded. Now you can start searching by using the search command";
   }
 
+  @ShellMethod(value = "Show the fields on which search is supported.", key = "fields")
+  public String fields() {
+    AsciiTable at = new AsciiTable();
+    at.addRule();
+    at.addRow("User", "Organization", "Ticket");
+    at.addRule();
+    List<String> userFields = UserField.getFieldsList();
+    List<String> orgFields = OrganizationField.getFieldsList();
+    List<String> ticketFields = TicketField.getFieldsList();
+
+    int maxSize = max(max(userFields.size(), orgFields.size()), ticketFields.size());
+
+    for (int i = 0; i < maxSize; i++) {
+      String userField = i < userFields.size() ? userFields.get(i) : null;
+      String orgField = i < orgFields.size() ? orgFields.get(i) : null;
+      String ticketField = i < ticketFields.size() ? ticketFields.get(i) : null;
+
+      if (userField != null) {
+        String userType = UserField.getFieldType(userField).getTypeName();
+        userType = userType.substring(userType.lastIndexOf('.') + 1);
+        userField += ": " + userType;
+      } else {
+        userField = "";
+      }
+      if (orgField != null) {
+        String orgType = OrganizationField.getFieldType(orgField).getTypeName();
+        orgType = orgType.substring(orgType.lastIndexOf('.') + 1);
+        orgField += ": " + orgType;
+      } else {
+        orgField = "";
+      }
+      if (ticketField != null) {
+        String ticketType = TicketField.getFieldType(ticketField).getTypeName();
+        ticketType = ticketType.substring(ticketType.lastIndexOf('.') + 1);
+        ticketField += ": " + ticketType;
+      } else {
+        ticketField = "";
+      }
+
+      at.addRow(userField, orgField, ticketField);
+      at.addRow(System.lineSeparator(), System.lineSeparator(), System.lineSeparator());
+    }
+    at.addRule();
+
+    return at.render() + System.lineSeparator();
+  }
+
+
   @ShellMethod(value = "Search for entities. Do 'search ticket[|user|organization] field value' to search for entities.", key = "search")
   public String search(
       @ShellOption(defaultValue = "ticket", help = "Entity to search. Choose 'user','organization' or 'ticket'", value = {
@@ -120,6 +175,4 @@ public class ShellCommands {
       return "No organizations were found!";
     }
   }
-
-
 }
