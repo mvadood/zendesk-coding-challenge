@@ -12,6 +12,7 @@ import com.zendesk.model.entity.User;
 import com.zendesk.model.response.Response;
 import com.zendesk.model.response.ResponseItem;
 import com.zendesk.processor.Processor;
+import com.zendesk.view.presentation.ResponseDrawer;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,12 +30,15 @@ public class ShellCommands {
   private boolean indexLoaded = false;
   private Processor processor;
   private final SearchInputProcessor searchInputProcessor;
+  private final ResponseDrawer responseDrawer;
 
   @Autowired
   public ShellCommands(Processor processor,
-      SearchInputProcessor searchInputProcessor) {
+      SearchInputProcessor searchInputProcessor,
+      ResponseDrawer responseDrawer) {
     this.processor = processor;
     this.searchInputProcessor = searchInputProcessor;
+    this.responseDrawer = responseDrawer;
   }
 
   @ShellMethod(value = "Load up entity files. Pass three values pointing to the users, organization and orgTickets files.", key = "load")
@@ -93,7 +97,7 @@ public class ShellCommands {
         response = processor.lookupTicket(convertedField, convertedValue);
       }
 
-      return response.draw(entity);
+      return responseDrawer.draw(response, entity);
 
 
     } catch (NotSupportedEntityType notSupportedEntityType) {
