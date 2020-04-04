@@ -6,7 +6,7 @@ import com.zendesk.exception.NoOrgsFoundException;
 import com.zendesk.exception.NoTicketsFoundException;
 import com.zendesk.exception.NoUsersFoundException;
 import com.zendesk.exception.input.InvalidValueTypeException;
-import com.zendesk.exception.input.NotSupportedEntityType;
+import com.zendesk.exception.input.NotSupportedEntityTypeException;
 import com.zendesk.exception.input.NotSupportedFieldException;
 import com.zendesk.model.entity.Organization;
 import com.zendesk.model.entity.Ticket;
@@ -48,14 +48,14 @@ public class ShellCommands {
     this.responseDrawer = responseDrawer;
   }
 
-  @ShellMethod(value = "Load up entity files. Pass three values pointing to the users, organization and orgTickets files.", key = "load")
+  @ShellMethod(value = "Load up entity files. Pass three values pointing to the users, organization and tickets files.", key = "load")
   public String loadFiles(
       @ShellOption(defaultValue = DEFAULT_USERS_FILE_PATH, help = "Path to the users file", value = {
           "--u", "--users"}) String users,
       @ShellOption(defaultValue = DEFAULT_ORGS_FILE_PATH, help = "Path to the organizations file", value = {
           "--o", "--organizations"}) String organizations,
-      @ShellOption(defaultValue = DEFAULT_TICKETS_FILE_PATH, help = "Path to the orgTickets file", value = {
-          "--t", "--orgTickets"}) String tickets)
+      @ShellOption(defaultValue = DEFAULT_TICKETS_FILE_PATH, help = "Path to the tickets file", value = {
+          "--t", "--tickets"}) String tickets)
       throws IOException {
     processor.clear();
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -140,7 +140,7 @@ public class ShellCommands {
       Type entityType = searchInputProcessor.getSearchEntity(entity);
       searchInputProcessor.checkIfFieldExists(entityType, field);
       Object convertedValue = searchInputProcessor.validateAndConvert(entityType, field, value);
-      String convertedField = searchInputProcessor.convertFieldValueString(field);
+      String convertedField = searchInputProcessor.convertFieldKeyString(field);
 
       Response<? extends ResponseItem> response;
       if (entityType.equals(User.class)) {
@@ -155,7 +155,7 @@ public class ShellCommands {
       return responseDrawer.draw(response, entity);
 
 
-    } catch (NotSupportedEntityType notSupportedEntityType) {
+    } catch (NotSupportedEntityTypeException notSupportedEntityTypeException) {
       return String.format(
           "'%s' is not a supported entity. Please choose among 'user', 'organization' and 'ticket'",
           entity);

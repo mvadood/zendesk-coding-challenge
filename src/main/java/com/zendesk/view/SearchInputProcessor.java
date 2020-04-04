@@ -2,7 +2,7 @@ package com.zendesk.view;
 
 import com.google.common.base.CaseFormat;
 import com.zendesk.exception.input.InvalidValueTypeException;
-import com.zendesk.exception.input.NotSupportedEntityType;
+import com.zendesk.exception.input.NotSupportedEntityTypeException;
 import com.zendesk.exception.input.NotSupportedFieldException;
 import com.zendesk.model.entity.Organization;
 import com.zendesk.model.entity.Ticket;
@@ -37,7 +37,7 @@ public class SearchInputProcessor {
   }
 
 
-  private Object convertTo(String value, Type fieldType) {
+  Object convertTo(String value, Type fieldType) {
     if (fieldType.equals(Long.class)) {
       return Long.parseLong(value);
     } else if (fieldType.equals(Boolean.class)) {
@@ -55,7 +55,7 @@ public class SearchInputProcessor {
     }
   }
 
-  public Type getSearchEntity(String entity) throws NotSupportedEntityType {
+  public Type getSearchEntity(String entity) throws NotSupportedEntityTypeException {
     entity = entity.trim().toLowerCase();
     Type entityType;
     if (entity.equals(EntityType.USER.toString())) {
@@ -65,7 +65,7 @@ public class SearchInputProcessor {
     } else if (entity.equals(EntityType.ORGANIZATION.toString())) {
       entityType = Organization.class;
     } else {
-      throw new NotSupportedEntityType();
+      throw new NotSupportedEntityTypeException();
     }
     return entityType;
   }
@@ -82,7 +82,7 @@ public class SearchInputProcessor {
     }
   }
 
-  public String convertFieldValueString(String fieldName) {
+  public String convertFieldKeyString(String fieldName) {
     if (fieldName.equals("_id")) {
       return "id";
     } else {

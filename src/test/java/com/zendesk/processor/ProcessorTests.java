@@ -56,14 +56,14 @@ public class ProcessorTests {
 
 
   @Test
-  public void lookupUsersByRoleMustReturn24ResponseItems() throws NoUsersFoundException {
+  public void lookupUsersByRoleShouldReturn24ResponseItems() throws NoUsersFoundException {
     Response<UserResponseItem> usersResponse = processor.lookupUser(ROLE_FIELD, "admin");
 
     assertEquals(24, usersResponse.getResponseItems().size());
   }
 
   @Test
-  public void lookupOrgsByCreatedAtMustReturn8RelatedTickets() throws NoOrgsFoundException {
+  public void lookupOrgsByCreatedAtShouldReturn8RelatedTickets() throws NoOrgsFoundException {
     Response<OrgResponseItem> orgsResponse = processor.lookupOrg(CREATED_AT_FIELD,
         ZonedDateTime.parse("2016-04-07T08:21:44 -10:00",
             DateTimeFormatter.ofPattern(Constants.DATE_FORMAT)).toEpochSecond());
@@ -73,7 +73,7 @@ public class ProcessorTests {
   }
 
   @Test
-  public void lookupTicketByExternalIdMustReturnTheRightUsers() throws NoTicketsFoundException {
+  public void lookupTicketByExternalIdShouldReturnTheRightUsers() throws NoTicketsFoundException {
     Response<TicketResponseItem> ticketsResponse = processor
         .lookupTicket(EXTERNAL_ID_FIELD, "c330acd5-26e0-4e99-b946-48b741225828");
     assertEquals(1, ticketsResponse.getResponseItems().size());
