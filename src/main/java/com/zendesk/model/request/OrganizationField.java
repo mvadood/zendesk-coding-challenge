@@ -1,6 +1,7 @@
 package com.zendesk.model.request;
 
 import java.lang.reflect.Type;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,7 +28,7 @@ public class OrganizationField {
     fieldTypes.put(EXTERNAL_ID, String.class);
     fieldTypes.put(NAME, String.class);
     fieldTypes.put(DOMAIN_NAMES, String.class);
-    fieldTypes.put(CREATED_AT, String.class);
+    fieldTypes.put(CREATED_AT, ZonedDateTime.class);
     fieldTypes.put(DETAILS, String.class);
     fieldTypes.put(SHARED_TICKETS, Boolean.class);
     fieldTypes.put(TAGS, String.class);

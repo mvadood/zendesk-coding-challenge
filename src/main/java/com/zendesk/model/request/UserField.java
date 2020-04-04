@@ -1,6 +1,7 @@
 package com.zendesk.model.request;
 
 import java.lang.reflect.Type;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,13 +38,13 @@ public class UserField {
     fieldTypes.put(EXTERNAL_ID, String.class);
     fieldTypes.put(NAME, String.class);
     fieldTypes.put(ALIAS, String.class);
-    fieldTypes.put(CREATED_AT, String.class);
+    fieldTypes.put(CREATED_AT, ZonedDateTime.class);
     fieldTypes.put(ACTIVE, Boolean.class);
     fieldTypes.put(VERIFIED, Boolean.class);
     fieldTypes.put(SHARED, Boolean.class);
     fieldTypes.put(LOCALE, String.class);
     fieldTypes.put(TIMEZONE, String.class);
-    fieldTypes.put(LAST_LOGIN_AT, String.class);
+    fieldTypes.put(LAST_LOGIN_AT, ZonedDateTime.class);
     fieldTypes.put(EMAIL, String.class);
     fieldTypes.put(PHONE, String.class);
     fieldTypes.put(SIGNATURE, String.class);

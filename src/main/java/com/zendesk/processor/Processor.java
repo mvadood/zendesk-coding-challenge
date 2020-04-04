@@ -80,9 +80,9 @@ public class Processor {
         orgResponseItem.setOrgUsers(null);
       }
       try {
-        orgResponseItem.setTickets(reverseIndexRepository.searchTicketByOrgId(org.getId()));
+        orgResponseItem.setOrgTickets(reverseIndexRepository.searchTicketByOrgId(org.getId()));
       } catch (NoTicketsFoundException e) {
-        orgResponseItem.setTickets(null);
+        orgResponseItem.setOrgTickets(null);
       }
       response.addResponseItem(orgResponseItem);
     }

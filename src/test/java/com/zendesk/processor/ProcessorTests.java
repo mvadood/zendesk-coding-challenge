@@ -69,7 +69,7 @@ public class ProcessorTests {
             DateTimeFormatter.ofPattern(Constants.DATE_FORMAT)).toEpochSecond());
 
     assertEquals(1, orgsResponse.getResponseItems().size());
-    assertEquals(8, orgsResponse.getResponseItems().get(0).getTickets().size());
+    assertEquals(8, orgsResponse.getResponseItems().get(0).getOrgTickets().size());
   }
 
   @Test

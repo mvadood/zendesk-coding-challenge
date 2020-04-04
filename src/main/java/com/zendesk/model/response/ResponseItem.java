@@ -1,5 +1,7 @@
 package com.zendesk.model.response;
 
-public abstract class ResponseItem {
+import com.zendesk.model.entity.Drawable;
+
+public abstract class ResponseItem implements Drawable {
 
 }

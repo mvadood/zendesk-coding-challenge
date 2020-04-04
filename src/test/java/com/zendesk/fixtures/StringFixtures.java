@@ -54,7 +54,7 @@ public class StringFixtures {
       + "  }";
   public static final String TICKET_STR = "{\n"
       + "    \"_id\": \"436bf9b0-1147-4c0a-8439-6f79833bff5b\",\n"
-      + "    \"url\": \"http://initech.zendesk.com/api/v2/tickets/436bf9b0-1147-4c0a-8439-6f79833bff5b.json\",\n"
+      + "    \"url\": \"http://initech.zendesk.com/api/v2/orgTickets/436bf9b0-1147-4c0a-8439-6f79833bff5b.json\",\n"
       + "    \"external_id\": \"9210cdc9-4bee-485f-a078-35396cd74063\",\n"
       + "    \"created_at\": \"2016-04-28T11:19:34 -10:00\",\n"
       + "    \"type\": \"incident\",\n"

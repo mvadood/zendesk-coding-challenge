@@ -6,7 +6,6 @@ import com.zendesk.exception.NoUsersFoundException;
 import com.zendesk.exception.input.InvalidValueTypeException;
 import com.zendesk.exception.input.NotSupportedEntityType;
 import com.zendesk.exception.input.NotSupportedFieldException;
-import com.zendesk.model.entity.Entity;
 import com.zendesk.model.entity.Organization;
 import com.zendesk.model.entity.Ticket;
 import com.zendesk.model.entity.User;
@@ -38,14 +37,14 @@ public class ShellCommands {
     this.searchInputProcessor = searchInputProcessor;
   }
 
-  @ShellMethod(value = "Load up entity files. Pass three values pointing to the users, organization and tickets files.", key = "load")
+  @ShellMethod(value = "Load up entity files. Pass three values pointing to the users, organization and orgTickets files.", key = "load")
   public String loadFiles(
       @ShellOption(defaultValue = DEFAULT_USERS_FILE_PATH, help = "Path to the users file", value = {
           "--u", "--users"}) String users,
       @ShellOption(defaultValue = DEFAULT_ORGS_FILE_PATH, help = "Path to the organizations file", value = {
           "--o", "--organizations"}) String organizations,
-      @ShellOption(defaultValue = DEFAULT_TICKETS_FILE_PATH, help = "Path to the tickets file", value = {
-          "--t", "--tickets"}) String tickets)
+      @ShellOption(defaultValue = DEFAULT_TICKETS_FILE_PATH, help = "Path to the orgTickets file", value = {
+          "--t", "--orgTickets"}) String tickets)
       throws IOException {
     processor.clear();
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -83,6 +82,7 @@ public class ShellCommands {
       searchInputProcessor.checkIfFieldExists(entityType, field);
       Object convertedValue = searchInputProcessor.validateAndConvert(entityType, field, value);
       String convertedField = searchInputProcessor.convertFieldValueString(field);
+
       Response<? extends ResponseItem> response;
       if (entityType.equals(User.class)) {
         response = processor.lookupUser(convertedField, convertedValue);
@@ -92,6 +92,8 @@ public class ShellCommands {
         assert entityType.equals(Ticket.class);
         response = processor.lookupTicket(convertedField, convertedValue);
       }
+
+      return response.draw(entity);
 
 
     } catch (NotSupportedEntityType notSupportedEntityType) {
@@ -113,8 +115,6 @@ public class ShellCommands {
     } catch (NoOrgsFoundException e) {
       return "No organizations were found!";
     }
-
-    return "";
   }
 
 

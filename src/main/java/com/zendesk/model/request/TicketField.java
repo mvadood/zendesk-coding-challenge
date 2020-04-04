@@ -1,6 +1,7 @@
 package com.zendesk.model.request;
 
 import java.lang.reflect.Type;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,7 +36,7 @@ public class TicketField {
     fieldTypes.put(ID, String.class);
     fieldTypes.put(URL, String.class);
     fieldTypes.put(EXTERNAL_ID, String.class);
-    fieldTypes.put(CREATED_AT, String.class);
+    fieldTypes.put(CREATED_AT, ZonedDateTime.class);
     fieldTypes.put(TYPE, String.class);
     fieldTypes.put(SUBJECT, String.class);
     fieldTypes.put(DESCRIPTION, String.class);
@@ -46,7 +47,7 @@ public class TicketField {
     fieldTypes.put(ORGANIZATION_ID, String.class);
     fieldTypes.put(TAGS, String.class);
     fieldTypes.put(HAS_INCIDENTS, Boolean.class);
-    fieldTypes.put(DUE_AT, String.class);
+    fieldTypes.put(DUE_AT, ZonedDateTime.class);
     fieldTypes.put(VIA, String.class);
   }
 
