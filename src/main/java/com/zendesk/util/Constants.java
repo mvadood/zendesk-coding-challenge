@@ -2,6 +2,9 @@ package com.zendesk.util;
 
 public class Constants {
 
+  /**
+   * Date format used in the files
+   */
   public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss z";
 
   public static final String LOGO =

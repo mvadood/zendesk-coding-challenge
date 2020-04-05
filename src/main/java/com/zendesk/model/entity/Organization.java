@@ -5,6 +5,9 @@ import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+/**
+ * Data class representing an organization
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class Organization extends Entity{

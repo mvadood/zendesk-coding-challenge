@@ -7,6 +7,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Class listing all the fields supported for a ticket
+ */
 public class TicketField {
 
   private static Map<String, Type> fieldTypes;
@@ -51,10 +54,19 @@ public class TicketField {
     fieldTypes.put(VIA, String.class);
   }
 
+  /**
+   * Gets the required data type for a field
+   *
+   * @param fieldName name of the field to enquire about its data type
+   * @return java type for that field
+   */
   public static Type getFieldType(String fieldName) {
     return fieldTypes.get(fieldName);
   }
 
+  /**
+   * Gets the list of fields supported by the ticket entity
+   */
   public static List<String> getFieldsList() {
     return new LinkedList<>(fieldTypes.keySet());
   }

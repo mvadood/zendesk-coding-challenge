@@ -7,6 +7,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Class listing all the fields supported for an organization
+ */
 public class OrganizationField {
 
   private static Map<String, Type> fieldTypes;
@@ -34,10 +37,19 @@ public class OrganizationField {
     fieldTypes.put(TAGS, String.class);
   }
 
+  /**
+   * Gets the required data type for a field
+   *
+   * @param fieldName name of the field to enquire about its data type
+   * @return java type for that field
+   */
   public static Type getFieldType(String fieldName) {
     return fieldTypes.get(fieldName);
   }
 
+  /**
+   * Gets the list of fields supported by the organization entity
+   */
   public static List<String> getFieldsList() {
     return new LinkedList<>(fieldTypes.keySet());
   }

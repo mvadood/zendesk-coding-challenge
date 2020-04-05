@@ -1,5 +1,8 @@
 package com.zendesk.model.response;
 
-public abstract class ResponseItem{
+/**
+ * Every search result contains a list of items instantiated from this class
+ */
+public abstract class ResponseItem {
 
 }

@@ -14,6 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+/**
+ * Class responsible for loading data from json files
+ */
 @Component
 @Scope("prototype")
 public class JsonFileReader<T> extends FileLoader<T> {
@@ -25,6 +28,14 @@ public class JsonFileReader<T> extends FileLoader<T> {
     this.gsonProvider = gsonProvider;
   }
 
+  /**
+   * Loads content of a json file into an iterator of objects of type `typeOfT`
+   *
+   * @param filePath path to the json file
+   * @param typeOfT type of object the file content should be translated into an iterator of
+   * @return an iterator of type typeOfT which can be used to load an index
+   * @throws IOException if there is a problem loading from a file
+   */
   @Override
   public Iterator<T> getIterator(String filePath, Type typeOfT)
       throws IOException {

@@ -5,6 +5,9 @@ import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+/**
+ * Data class representing a user
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class User extends Entity{

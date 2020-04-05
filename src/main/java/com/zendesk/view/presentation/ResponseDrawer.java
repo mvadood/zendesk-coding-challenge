@@ -1,5 +1,6 @@
 package com.zendesk.view.presentation;
 
+import com.zendesk.model.entity.Entity;
 import com.zendesk.model.response.OrgResponseItem;
 import com.zendesk.model.response.Response;
 import com.zendesk.model.response.ResponseItem;
@@ -9,6 +10,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * Class that draws a {@link Response} into the console in terms of tables
+ */
 @Component
 public class ResponseDrawer implements Drawable<Response> {
 
@@ -30,6 +34,13 @@ public class ResponseDrawer implements Drawable<Response> {
     this.userResponseItemDrawer = userResponseItemDrawer;
   }
 
+  /**
+   * Draws an {@link Response} into the console in terms of a table
+   *
+   * @param toDraw {@link Response} to draw
+   * @param entity being searched
+   * @return a string representing the {@link Response}
+   */
   @Override
   public String draw(Response toDraw, String entity) {
     List<? extends ResponseItem> responseItems = toDraw.getResponseItems();
@@ -50,7 +61,12 @@ public class ResponseDrawer implements Drawable<Response> {
     return result.toString().trim();
   }
 
-
+  /**
+   * Gets the right drawer for a {@link ResponseItem}
+   *
+   * @param responseItem {@link ResponseItem} to get the drawer for
+   * @return a {@link Drawable} instance
+   */
   private Drawable getProperDrawer(ResponseItem responseItem) {
     if (responseItem instanceof TicketResponseItem) {
       return ticketResponseItemDrawer;

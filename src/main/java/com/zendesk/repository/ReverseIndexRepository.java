@@ -12,7 +12,6 @@ import com.zendesk.model.entity.Organization;
 import com.zendesk.model.entity.Ticket;
 import com.zendesk.model.entity.User;
 import com.zendesk.model.request.TicketField;
-import com.zendesk.model.request.UserField;
 import com.zendesk.util.file.JsonFileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -25,6 +24,13 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+/**
+ * <p>
+ * ReverseIndexRepository is a simple implementation of a reverse/inverted index.
+ *
+ * @see <a href="https://www.geeksforgeeks.org/inverted-index</a>
+ * </p>
+ */
 @Repository
 public class ReverseIndexRepository {
 
@@ -59,6 +65,9 @@ public class ReverseIndexRepository {
     objectMapper.registerModule(new JavaTimeModule());
   }
 
+  /**
+   * Clears the repository from any data
+   */
   public void clear() {
     users = new HashMap<>();
     tickets = new HashMap<>();
@@ -69,6 +78,14 @@ public class ReverseIndexRepository {
     ticketsIndex = new HashMap<>();
   }
 
+  /**
+   * Loads up the index from input json files
+   *
+   * @param usersFilePath path to the users file
+   * @param orgsFilePath path to the organizations file
+   * @param ticketsFilePath path to the tickets file
+   * @throws IOException in case there was an issue loading the files
+   */
   public void loadIndex(String usersFilePath, String orgsFilePath,
       String ticketsFilePath) throws IOException {
     Iterator<User> usersIterator = usersfileLoader.getIterator(usersFilePath, User.class);
@@ -81,7 +98,14 @@ public class ReverseIndexRepository {
     populateMaps(ticketsIterator, tickets, ticketsIndex);
   }
 
-
+  /**
+   * Populates the internal data structures required for building the index
+   *
+   * @param iterator an iterator to the file being read
+   * @param entities map containing data for that specific {@link com.zendesk.model.entity.Entity}
+   * whose maps are being populated
+   * @param index data structure being built
+   */
   private void populateMaps(Iterator iterator, Map entities,
       Map<String, Map<Object, List<String>>> index) {
     while (iterator.hasNext()) {
@@ -107,6 +131,13 @@ public class ReverseIndexRepository {
     }
   }
 
+  /**
+   * indexes a single values item for an entity into the index
+   *
+   * @param key field name
+   * @param value field value
+   * @param entity entity to be indexed
+   */
   void indexSingleValue(String key, Object value, Entity entity,
       Map<String, Map<Object, List<String>>> index) {
     if (value instanceof String) {
@@ -128,11 +159,24 @@ public class ReverseIndexRepository {
     }
   }
 
+  /**
+   * Creates a map out of an entity
+   *
+   * @param entity the entity that is going to be converted
+   */
   Map<String, Object> buildEntityKeyValues(Entity entity) {
     return objectMapper.convertValue(entity, new TypeReference<>() {
     });
   }
 
+  /**
+   * Searches among the tickets based on a given key and value
+   *
+   * @param field name of the field searching for
+   * @param value value of the field to search for
+   * @return list of tickets matching the search query
+   * @throws com.zendesk.exception.NoTicketsFoundException in case there were not tickets found
+   */
   public List<Ticket> searchTicket(String field, Object value) throws NoTicketsFoundException {
     List<String> ticketIds = ticketsIndex.get(field).get(value);
     if (ticketIds == null) {
@@ -142,6 +186,14 @@ public class ReverseIndexRepository {
     }
   }
 
+  /**
+   * Searches among the organizations based on a given key and value
+   *
+   * @param field name of the field searching for
+   * @param value value of the field to search for
+   * @return list of organizations matching the search query
+   * @throws com.zendesk.exception.NoOrgsFoundException case there were not organizations found
+   */
   public List<Organization> searchOrg(String field, Object value) throws NoOrgsFoundException {
     List<String> orgIds = orgsIndex.get(field).get(value);
     if (orgIds == null) {
@@ -151,6 +203,14 @@ public class ReverseIndexRepository {
     }
   }
 
+  /**
+   * Searches among the users based on a given key and value
+   *
+   * @param field name of the field searching for
+   * @param value value of the field to search for
+   * @return list of users matching the search query
+   * @throws com.zendesk.exception.NoUsersFoundException case there were not users found
+   */
   public List<User> searchUser(String field, Object value) throws NoUsersFoundException {
     List<String> userIds = usersIndex.get(field).get(value);
     if (userIds == null) {
@@ -160,31 +220,67 @@ public class ReverseIndexRepository {
     }
   }
 
+  /**
+   * searches for an organization based on its id
+   *
+   * @return {@link Organization} matching the id
+   * @throws NoOrgsFoundException in case no organizations were found to have that id
+   */
   public Organization searchOrgById(String id) throws NoOrgsFoundException {
     return searchOrg(ID_FIELD, id).get(0);
   }
 
+  /**
+   * searches for a user based on its id
+   *
+   * @return {@link User} matching the id
+   * @throws NoUsersFoundException in case no organizations were found to have that id
+   */
   public User searchUserById(String id) throws NoUsersFoundException {
     return searchUser(ID_FIELD, id).get(0);
   }
 
+  /**
+   * searches for a user based on its organization id
+   *
+   * @return list of {@link User}s matching the id
+   * @throws NoUsersFoundException in case no users were found to have that organization id
+   */
   public List<User> searchUserByOrgId(String orgId) throws NoUsersFoundException {
     return searchUser(
         CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, TicketField.ORGANIZATION_ID), orgId);
   }
 
+  /**
+   * searches for an ticket based on its organization id
+   *
+   * @return {@link Ticket} matching having the organization id specified
+   * @throws NoTicketsFoundException in case no tickets were found for that organization
+   */
   public List<Ticket> searchTicketByOrgId(String orgId)
       throws NoTicketsFoundException {
     return searchTicket(
         CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, TicketField.ORGANIZATION_ID), orgId);
   }
 
+  /**
+   * searches for a ticket based on the id of its submitter
+   *
+   * @return ticket matching submitter with id = submitterId
+   * @throws NoTicketsFoundException in case no tickets were submitted by that user
+   */
   public List<Ticket> searchTicketBySubmitterId(String submitterId) throws NoTicketsFoundException {
     return searchTicket(
         CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, TicketField.SUBMITTER_ID),
         submitterId);
   }
 
+  /**
+   * searches for a ticket based on the id of its assigned user
+   *
+   * @return ticket matching assignee with id = assigneeId
+   * @throws NoTicketsFoundException in case no tickets were assigned to that user
+   */
   public List<Ticket> searchTicketByAssigneeId(String assigneeId) throws NoTicketsFoundException {
     return searchTicket(
         CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, TicketField.ASSIGNEE_ID),

@@ -7,6 +7,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Class listing all the fields supported for a user
+ */
 public class UserField {
 
   private static Map<String, Type> fieldTypes;
@@ -54,10 +57,19 @@ public class UserField {
     fieldTypes.put(ROLE, String.class);
   }
 
+  /**
+   * Gets the required data type for a field
+   *
+   * @param fieldName name of the field to enquire about its data type
+   * @return java type for that field
+   */
   public static Type getFieldType(String fieldName) {
     return fieldTypes.get(fieldName);
   }
 
+  /**
+   * Gets the list of fields supported by the user entity
+   */
   public static List<String> getFieldsList() {
     return new LinkedList<>(fieldTypes.keySet());
   }

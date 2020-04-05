@@ -6,6 +6,9 @@ import com.zendesk.model.entity.User;
 import java.util.List;
 import lombok.Data;
 
+/**
+ * Searching for user results in a list containing of elements of this class
+ */
 @Data
 public class UserResponseItem extends ResponseItem {
 

@@ -53,7 +53,7 @@ public class ProcessorTests {
 
   @After
   public void cleanRepository() {
-    reverseIndexRepository.clear();
+    processor.clear();
   }
 
 

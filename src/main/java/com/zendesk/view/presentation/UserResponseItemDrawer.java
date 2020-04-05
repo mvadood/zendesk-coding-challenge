@@ -1,13 +1,18 @@
 package com.zendesk.view.presentation;
 
+import com.zendesk.model.entity.Entity;
 import com.zendesk.model.entity.Organization;
 import com.zendesk.model.entity.Ticket;
 import com.zendesk.model.entity.User;
+import com.zendesk.model.response.OrgResponseItem;
 import com.zendesk.model.response.UserResponseItem;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * Class that draws an {@link UserResponseItem} into the console in terms of tables
+ */
 @Component
 public class UserResponseItemDrawer implements Drawable<UserResponseItem> {
 
@@ -19,6 +24,13 @@ public class UserResponseItemDrawer implements Drawable<UserResponseItem> {
     this.entityDrawer = entityDrawer;
   }
 
+  /**
+   * Draws an {@link Entity} into the console in terms of a table
+   *
+   * @param userResponseItem {@link UserResponseItem} to draw
+   * @param itemNum index of the response item
+   * @return a string representing the {@link UserResponseItem}
+   */
   @Override
   public String draw(UserResponseItem userResponseItem, String itemNum) {
     User user = userResponseItem.getUser();

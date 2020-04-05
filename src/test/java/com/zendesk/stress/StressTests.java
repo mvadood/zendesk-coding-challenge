@@ -37,7 +37,7 @@ import org.springframework.test.context.junit4.SpringRunner;
     JsonFileReader.class})
 public class StressTests {
 
-  int numTickets = 10000;
+  int numTickets = 100;
 
   static List<String> orgIdsPool;
   static List<String> userIdsPool;

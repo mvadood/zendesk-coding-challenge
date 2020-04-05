@@ -16,6 +16,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * <p>
+ * Processor is responsible for taking the user input and building up the inverted index {@link
+ * com.zendesk.repository.ReverseIndexRepository}. It also takes care of the search
+ * </p>
+ */
 @Component
 public class Processor {
 
@@ -26,15 +32,35 @@ public class Processor {
     this.reverseIndexRepository = reverseIndexRepository;
   }
 
-  public void clear(){
+  /**
+   * Clears the repository from any data
+   */
+  public void clear() {
     reverseIndexRepository.clear();
   }
 
+  /**
+   * Loads up the index from input json files
+   *
+   * @param usersFilePath path to the users file
+   * @param orgsFilePath path to the organizations file
+   * @param ticketsFilePath path to the tickets file
+   */
   public void loadUpRepo(String usersFilePath, String orgsFilePath, String ticketsFilePath)
       throws IOException {
     reverseIndexRepository.loadIndex(usersFilePath, orgsFilePath, ticketsFilePath);
   }
 
+  /**
+   * Searches among the tickets based on a given key and value and returns its corresponding users
+   * an organizations as well
+   *
+   * @param field name of the field searching for
+   * @param value value of the field to search for
+   * @return tickets matching the search plus their corresponding users and organizations in the
+   * format of a {@link Response}
+   * @throws com.zendesk.exception.NoTicketsFoundException in case there were not tickets found
+   */
   public Response<TicketResponseItem> lookupTicket(String field, Object value)
       throws NoTicketsFoundException {
     Response<TicketResponseItem> response = new Response<>();
@@ -65,6 +91,15 @@ public class Processor {
     return response;
   }
 
+  /**
+   * Searches among the organizations based on a given key and value
+   *
+   * @param field name of the field searching for
+   * @param value value of the field to search for
+   * @return organizations matching the search plus their corresponding users and tickets in the
+   * format of a {@link Response}
+   * @throws com.zendesk.exception.NoOrgsFoundException in case there were not tickets found
+   */
   public Response<OrgResponseItem> lookupOrg(String field, Object value)
       throws NoOrgsFoundException {
     Response<OrgResponseItem> response = new Response<>();
@@ -90,6 +125,15 @@ public class Processor {
     return response;
   }
 
+  /**
+   * Searches among the users based on a given key and value
+   *
+   * @param field name of the field searching for
+   * @param value value of the field to search for
+   * @return users matching the search plus their corresponding organizations and tickets in the
+   * format of a {@link Response}
+   * @throws com.zendesk.exception.NoUsersFoundException in case there were not tickets found
+   */
   public Response<UserResponseItem> lookupUser(String field, Object value)
       throws NoUsersFoundException {
     Response<UserResponseItem> response = new Response<>();

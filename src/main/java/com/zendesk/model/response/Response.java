@@ -4,7 +4,11 @@ import java.util.LinkedList;
 import java.util.List;
 import lombok.Getter;
 
-public class Response<T extends ResponseItem>  {
+/**
+ * Main object returned for a search query. Contains a list of {@link ResponseItem}s
+ */
+public class Response<T extends ResponseItem> {
+
   @Getter
   List<T> responseItems = new LinkedList<>();
 

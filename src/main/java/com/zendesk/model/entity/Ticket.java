@@ -6,11 +6,17 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+/**
+ * Data class representing a ticket
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 public class Ticket extends Entity {
 
+  /**
+   * constructor used by the stress test
+   */
   public Ticket(String id, String url, String externalId, ZonedDateTime createdAt, String type,
       String subject, String description, String priority, String status,
       String submitterId, String assigneeId, String organizationId,
