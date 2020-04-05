@@ -31,6 +31,8 @@ public class GsonProvider {
         .registerTypeAdapter(ZonedDateTime.class,
             (JsonSerializer<ZonedDateTime>) (src, type, jsonSerializationContext) -> new JsonPrimitive(
                 src.format(DateTimeFormatter.ofPattern(Constants.DATE_FORMAT)))
-        ).create();
+        )
+        .setPrettyPrinting()
+        .create();
   }
 }

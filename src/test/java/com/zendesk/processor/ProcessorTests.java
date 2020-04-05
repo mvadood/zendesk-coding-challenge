@@ -2,9 +2,14 @@ package com.zendesk.processor;
 
 import static junit.framework.TestCase.assertEquals;
 
+import com.google.common.base.CaseFormat;
 import com.zendesk.exception.NoOrgsFoundException;
 import com.zendesk.exception.NoTicketsFoundException;
 import com.zendesk.exception.NoUsersFoundException;
+import com.zendesk.model.entity.Ticket;
+import com.zendesk.model.request.OrganizationField;
+import com.zendesk.model.request.TicketField;
+import com.zendesk.model.request.UserField;
 import com.zendesk.model.response.OrgResponseItem;
 import com.zendesk.model.response.Response;
 import com.zendesk.model.response.TicketResponseItem;
@@ -26,7 +31,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {ReverseIndexRepository.class, Processor.class, GsonProvider.class, JsonFileReader.class})
+@SpringBootTest(classes = {ReverseIndexRepository.class, Processor.class, GsonProvider.class,
+    JsonFileReader.class})
 public class ProcessorTests {
 
   @Autowired
@@ -34,10 +40,6 @@ public class ProcessorTests {
 
   @Autowired
   ReverseIndexRepository reverseIndexRepository;
-
-  public static final String ROLE_FIELD = "role";
-  public static final String CREATED_AT_FIELD = "createdAt";
-  public static final String EXTERNAL_ID_FIELD = "externalId";
 
   @Before
   public void loadUpProcessor() throws IOException {
@@ -50,21 +52,22 @@ public class ProcessorTests {
   }
 
   @After
-  public void cleanRepository(){
+  public void cleanRepository() {
     reverseIndexRepository.clear();
   }
 
 
   @Test
   public void lookupUsersByRoleShouldReturn24ResponseItems() throws NoUsersFoundException {
-    Response<UserResponseItem> usersResponse = processor.lookupUser(ROLE_FIELD, "admin");
+    Response<UserResponseItem> usersResponse = processor.lookupUser(UserField.ROLE, "admin");
 
     assertEquals(24, usersResponse.getResponseItems().size());
   }
 
   @Test
   public void lookupOrgsByCreatedAtShouldReturn8RelatedTickets() throws NoOrgsFoundException {
-    Response<OrgResponseItem> orgsResponse = processor.lookupOrg(CREATED_AT_FIELD,
+    Response<OrgResponseItem> orgsResponse = processor.lookupOrg(
+        CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, OrganizationField.CREATED_AT),
         ZonedDateTime.parse("2016-04-07T08:21:44 -10:00",
             DateTimeFormatter.ofPattern(Constants.DATE_FORMAT)).toEpochSecond());
 
@@ -75,7 +78,9 @@ public class ProcessorTests {
   @Test
   public void lookupTicketByExternalIdShouldReturnTheRightUsers() throws NoTicketsFoundException {
     Response<TicketResponseItem> ticketsResponse = processor
-        .lookupTicket(EXTERNAL_ID_FIELD, "c330acd5-26e0-4e99-b946-48b741225828");
+        .lookupTicket(
+            CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, TicketField.EXTERNAL_ID),
+            "c330acd5-26e0-4e99-b946-48b741225828");
     assertEquals(1, ticketsResponse.getResponseItems().size());
     assertEquals("47", ticketsResponse.getResponseItems().get(0).getAssignee().getId());
     assertEquals("54", ticketsResponse.getResponseItems().get(0).getSubmitter().getId());

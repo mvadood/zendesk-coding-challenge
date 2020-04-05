@@ -3,6 +3,7 @@ package com.zendesk.repository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.google.common.base.CaseFormat;
 import com.zendesk.exception.NoOrgsFoundException;
 import com.zendesk.exception.NoTicketsFoundException;
 import com.zendesk.exception.NoUsersFoundException;
@@ -10,6 +11,8 @@ import com.zendesk.model.entity.Entity;
 import com.zendesk.model.entity.Organization;
 import com.zendesk.model.entity.Ticket;
 import com.zendesk.model.entity.User;
+import com.zendesk.model.request.TicketField;
+import com.zendesk.model.request.UserField;
 import com.zendesk.util.file.JsonFileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -25,6 +28,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class ReverseIndexRepository {
 
+  private final String ID_FIELD = "id";
+
   private Map<String, User> users;
   private Map<String, Ticket> tickets;
   private Map<String, Organization> organizations;
@@ -39,11 +44,6 @@ public class ReverseIndexRepository {
   private final JsonFileReader<Ticket> ticketsfileLoader;
 
   private ObjectMapper objectMapper;
-
-  private static final String ID_FIELD_NAME = "id";
-  private static final String ORGANIZATION_ID_FIELD_NAME = "organizationId";
-  private static final String SUBMITTER_ID_FIELD_NAME = "submitterId";
-  private static final String ASSIGNEE_ID_FIELD_NAME = "assigneeId";
 
   @Autowired
   public ReverseIndexRepository(
@@ -161,27 +161,33 @@ public class ReverseIndexRepository {
   }
 
   public Organization searchOrgById(String id) throws NoOrgsFoundException {
-    return searchOrg(ID_FIELD_NAME, id).get(0);
+    return searchOrg(ID_FIELD, id).get(0);
   }
 
   public User searchUserById(String id) throws NoUsersFoundException {
-    return searchUser(ID_FIELD_NAME, id).get(0);
+    return searchUser(ID_FIELD, id).get(0);
   }
 
   public List<User> searchUserByOrgId(String orgId) throws NoUsersFoundException {
-    return searchUser(ORGANIZATION_ID_FIELD_NAME, orgId);
+    return searchUser(
+        CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, TicketField.ORGANIZATION_ID), orgId);
   }
 
   public List<Ticket> searchTicketByOrgId(String orgId)
       throws NoTicketsFoundException {
-    return searchTicket(ORGANIZATION_ID_FIELD_NAME, orgId);
+    return searchTicket(
+        CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, TicketField.ORGANIZATION_ID), orgId);
   }
 
   public List<Ticket> searchTicketBySubmitterId(String submitterId) throws NoTicketsFoundException {
-    return searchTicket(SUBMITTER_ID_FIELD_NAME, submitterId);
+    return searchTicket(
+        CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, TicketField.SUBMITTER_ID),
+        submitterId);
   }
 
   public List<Ticket> searchTicketByAssigneeId(String assigneeId) throws NoTicketsFoundException {
-    return searchTicket(ASSIGNEE_ID_FIELD_NAME, assigneeId);
+    return searchTicket(
+        CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, TicketField.ASSIGNEE_ID),
+        assigneeId);
   }
 }
