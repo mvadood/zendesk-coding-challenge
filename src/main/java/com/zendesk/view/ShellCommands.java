@@ -27,6 +27,9 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
+/**
+ * Class containing the shell commands that can be run
+ */
 @ShellComponent
 public class ShellCommands {
 
@@ -48,6 +51,15 @@ public class ShellCommands {
     this.responseDrawer = responseDrawer;
   }
 
+  /**
+   * Loads json files into the index
+   *
+   * @param users path to the users json file
+   * @param organizations path to the organizations json file
+   * @param tickets path to the tickets json file
+   * @return message showing the load up was successful or not
+   * @throws IOException in case there was a problem loading the files
+   */
   @ShellMethod(value = "Load up entity files. Pass three values pointing to the users, organization and tickets files.", key = "load")
   public String loadFiles(
       @ShellOption(defaultValue = DEFAULT_USERS_FILE_PATH, help = "Path to the users file", value = {
@@ -75,6 +87,11 @@ public class ShellCommands {
     return "Great! Index was loaded. Now you can start searching by using the search command";
   }
 
+  /**
+   * Lists the fields on which search can be conducted
+   *
+   * @return the list of the fields on which search can be conducted
+   */
   @ShellMethod(value = "Show the fields on which search is supported.", key = "fields")
   public String fields() {
     AsciiTable at = new AsciiTable();
@@ -122,7 +139,15 @@ public class ShellCommands {
     return at.render() + System.lineSeparator();
   }
 
-
+  /**
+   * Searches for entities
+   *
+   * @param entity string of the entity to search for. user|organization|ticket
+   * @param field field to search on
+   * @param value value of the field to search for
+   * @return the search results in a string table representation or the error message if there is
+   * any
+   */
   @ShellMethod(value = "Search for entities. Do 'search ticket[|user|organization] field value' to search for entities.", key = "search")
   public String search(
       @ShellOption(defaultValue = "ticket", help = "Entity to search. Choose 'user','organization' or 'ticket'", value = {

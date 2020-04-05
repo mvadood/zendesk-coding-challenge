@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import net.andreinc.mockneat.MockNeat;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -32,6 +33,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+/**
+ * Testing the solution's performance with some mocked data
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {ReverseIndexRepository.class, Processor.class, GsonProvider.class,
     JsonFileReader.class})
@@ -54,6 +58,9 @@ public class StressTests {
 
   private final String TICKETS_FILE = "New_Tickets.json";
 
+  /**
+   * Creates the pool of data from which random data can be generated
+   */
   @BeforeClass
   public static void initPools() {
     orgIdsPool = IntStream.range(101, 126).mapToObj(String::valueOf)
@@ -70,6 +77,9 @@ public class StressTests {
   @Autowired
   ReverseIndexRepository reverseIndexRepository;
 
+  /**
+   * Loads up the processor instance building up the default index before each test
+   */
   @Before
   public void loadUpProcessor() throws IOException {
     storeNewTicketsFile();
@@ -82,6 +92,18 @@ public class StressTests {
         TICKETS_FILE);
   }
 
+  /**
+   * Cleans up the repo after each test
+   */
+  @After
+  public void clear() {
+    processor.clear();
+  }
+
+  /**
+   * Searching for a ticket by its status in a big dataset should be successful without a major
+   * issue
+   */
   @Test
   public void searchTicketByStatusShouldSucceed() throws NoTicketsFoundException {
     Response<TicketResponseItem> response = processor.lookupTicket(TicketField.STATUS, "open");
@@ -89,7 +111,9 @@ public class StressTests {
     assertNotEquals(0, response.getResponseItems().size());
   }
 
-
+  /**
+   * Stores the file containing all the mock tickets data
+   */
   private void storeNewTicketsFile() throws IOException {
     MockNeat mock = MockNeat.threadLocal();
 

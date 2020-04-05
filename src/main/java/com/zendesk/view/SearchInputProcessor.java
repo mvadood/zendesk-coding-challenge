@@ -16,6 +16,9 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import org.springframework.stereotype.Component;
 
+/**
+ * Class which processes and validates the input entered by the user for a search query
+ */
 @Component
 public class SearchInputProcessor {
 
@@ -36,7 +39,12 @@ public class SearchInputProcessor {
     }
   }
 
-
+  /**
+   * Converts user input for a field into the appropriate supported data type
+   *
+   * @param value value to be converted
+   * @param fieldType type to which conversion should happen
+   */
   Object convertTo(String value, Type fieldType) {
     if (fieldType.equals(Long.class)) {
       return Long.parseLong(value);
@@ -55,6 +63,14 @@ public class SearchInputProcessor {
     }
   }
 
+  /**
+   * Translates an entity string into an {@link com.zendesk.model.entity.Entity} type
+   *
+   * @param entity entity string to translate
+   * @return the proper {@link com.zendesk.model.entity.Entity} type
+   * @throws NotSupportedEntityTypeException if there are no equivalent entities for the given
+   * string
+   */
   public Type getSearchEntity(String entity) throws NotSupportedEntityTypeException {
     entity = entity.trim().toLowerCase();
     Type entityType;
@@ -70,6 +86,13 @@ public class SearchInputProcessor {
     return entityType;
   }
 
+  /**
+   * Checks if a field is supported for a specific {@link com.zendesk.model.entity.Entity}
+   *
+   * @param entityType entity type to check the field name for
+   * @param fieldName field to check
+   * @throws NotSupportedFieldException if the field is not supported for that entity
+   */
   public void checkIfFieldExists(Type entityType, String fieldName)
       throws NotSupportedFieldException {
     fieldName = fieldName.trim().toLowerCase();
@@ -89,6 +112,7 @@ public class SearchInputProcessor {
       return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, fieldName);
     }
   }
+
 
   enum EntityType {
     USER,

@@ -26,6 +26,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+/**
+ * Tests testing the {@link ReverseIndexRepository} class
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {JsonFileReader.class, ReverseIndexRepository.class, GsonProvider.class})
 public class ReverseIndexRepositoryTests {
@@ -44,11 +47,17 @@ public class ReverseIndexRepositoryTests {
   @Autowired
   ReverseIndexRepository reverseIndexRepository;
 
+  /**
+   * Cleans up the repo after each test
+   */
   @After
   public void cleanRepository() {
     reverseIndexRepository.clear();
   }
 
+  /**
+   * User's key values should contain the user's fields
+   */
   @Test
   public void entityKeyValuesShouldContainSetKeys() {
     Map<String, Object> entityKeyValues = reverseIndexRepository
@@ -61,7 +70,9 @@ public class ReverseIndexRepositoryTests {
         .containsKey(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, UserField.TAGS)));
   }
 
-
+  /**
+   * A single item (_id) should be found in the index once it is indexed
+   */
   @Test
   public void indexShouldContainIndexedString() {
     Map<String, Map<Object, List<String>>> index = new HashMap<>();
@@ -73,6 +84,9 @@ public class ReverseIndexRepositoryTests {
         index.get(ID_FIELD).get(EntityFixtures.org.getId().trim().toLowerCase()).size());
   }
 
+  /**
+   * A list item (tags) should be found in the index once it is indexed
+   */
   @Test
   public void indexShouldContainIndexedList() {
     String tagsField = CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, UserField.TAGS);
@@ -89,32 +103,50 @@ public class ReverseIndexRepositoryTests {
             .size());
   }
 
+  /**
+   * Searching a ticket by its subject should return the right number of tickets
+   */
   @Test
   public void searchTicketBySubjectShouldReturn1() throws IOException, NoTicketsFoundException {
     loadUpIndex(reverseIndexRepository);
 
     List<Ticket> tickets = reverseIndexRepository
-        .searchTicket(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, TicketField.SUBJECT), "A Catastrophe in Korea (North)".toLowerCase());
+        .searchTicket(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, TicketField.SUBJECT),
+            "A Catastrophe in Korea (North)".toLowerCase());
 
     assertEquals(1, tickets.size());
   }
 
+  /**
+   * Searching a ticket by its list typed field (tags) should return the right number of tickets
+   */
   @Test
   public void searchTicketByTagShouldReturn14() throws IOException, NoTicketsFoundException {
     loadUpIndex(reverseIndexRepository);
 
     List<Ticket> tickets = reverseIndexRepository
-        .searchTicket(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, TicketField.TAGS), "Pennsylvania".toLowerCase());
+        .searchTicket(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, TicketField.TAGS),
+            "Pennsylvania".toLowerCase());
 
     assertEquals(14, tickets.size());
   }
 
+  /**
+   * Searching an organization that does not exist should throw a {@link NoOrgsFoundException}
+   * exception
+   */
   @Test(expected = NoOrgsFoundException.class)
   public void shouldThrowNoOrgsFoundException() throws IOException, NoOrgsFoundException {
     loadUpIndex(reverseIndexRepository);
     reverseIndexRepository.searchOrgById("imaginary_id");
   }
 
+  /**
+   * Loads up an index from the default test files
+   *
+   * @param reverseIndexRepository repo object
+   * @throws IOException if there's a problem locating the files
+   */
   private void loadUpIndex(ReverseIndexRepository reverseIndexRepository) throws IOException {
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
     reverseIndexRepository

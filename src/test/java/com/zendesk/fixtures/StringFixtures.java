@@ -1,5 +1,8 @@
 package com.zendesk.fixtures;
 
+/**
+ * Provides simple fixtures for each {@link com.zendesk.model.entity.Entity} in terms of a string
+ */
 public class StringFixtures {
 
   private StringFixtures() {

@@ -4,7 +4,6 @@ import com.zendesk.model.entity.Entity;
 import com.zendesk.model.entity.Organization;
 import com.zendesk.model.entity.Ticket;
 import com.zendesk.model.entity.User;
-import com.zendesk.model.response.OrgResponseItem;
 import com.zendesk.model.response.TicketResponseItem;
 import com.zendesk.model.response.UserResponseItem;
 import org.springframework.beans.factory.annotation.Autowired;

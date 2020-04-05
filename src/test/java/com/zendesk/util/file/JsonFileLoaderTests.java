@@ -17,6 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+/**
+ * Tests testing the {@link JsonFileReader} class
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {JsonFileReader.class, GsonProvider.class})
 public class JsonFileLoaderTests {
@@ -30,6 +33,9 @@ public class JsonFileLoaderTests {
   @Autowired
   JsonFileReader<Ticket> ticketsJsonFileReader;
 
+  /**
+   * Number of loaded users should match th real number
+   */
   @Test
   public void usersCountShouldMatch75() throws IOException {
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -42,6 +48,9 @@ public class JsonFileLoaderTests {
   }
 
 
+  /**
+   * Number of loaded orgs should match th real number
+   */
   @Test
   public void orgsCountShouldMatch25() throws IOException {
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -54,6 +63,9 @@ public class JsonFileLoaderTests {
     assertEquals(25, size.get());
   }
 
+  /**
+   * Number of loaded tickets should match th real number
+   */
   @Test
   public void ticketsCountShouldMatch200() throws IOException {
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();

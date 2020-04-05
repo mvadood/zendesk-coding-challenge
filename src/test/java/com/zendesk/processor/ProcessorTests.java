@@ -30,6 +30,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+/**
+ * Tests testing the {@link Processor}
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {ReverseIndexRepository.class, Processor.class, GsonProvider.class,
     JsonFileReader.class})
@@ -41,6 +44,9 @@ public class ProcessorTests {
   @Autowired
   ReverseIndexRepository reverseIndexRepository;
 
+  /**
+   * Loads up the repo from the default files
+   */
   @Before
   public void loadUpProcessor() throws IOException {
     processor = new Processor(reverseIndexRepository);
@@ -51,12 +57,18 @@ public class ProcessorTests {
         classLoader.getResource(TestConstants.TICKETS_FILE_PATH).getPath());
   }
 
+  /**
+   * Cleans up the repo after each test
+   */
   @After
   public void cleanRepository() {
     processor.clear();
   }
 
 
+  /**
+   * Searching for users by role. Should pass if all 24 admins are found
+   */
   @Test
   public void lookupUsersByRoleShouldReturn24ResponseItems() throws NoUsersFoundException {
     Response<UserResponseItem> usersResponse = processor.lookupUser(UserField.ROLE, "admin");
@@ -64,6 +76,10 @@ public class ProcessorTests {
     assertEquals(24, usersResponse.getResponseItems().size());
   }
 
+  /**
+   * Searching for tickets by created time of their organization. Should pass if all 8 tickets are
+   * found
+   */
   @Test
   public void lookupOrgsByCreatedAtShouldReturn8RelatedTickets() throws NoOrgsFoundException {
     Response<OrgResponseItem> orgsResponse = processor.lookupOrg(
@@ -75,6 +91,10 @@ public class ProcessorTests {
     assertEquals(8, orgsResponse.getResponseItems().get(0).getOrgTickets().size());
   }
 
+  /**
+   * Searching for users based on their tickets' external id. Should pass if all 47/54 users are
+   * found
+   */
   @Test
   public void lookupTicketByExternalIdShouldReturnTheRightUsers() throws NoTicketsFoundException {
     Response<TicketResponseItem> ticketsResponse = processor

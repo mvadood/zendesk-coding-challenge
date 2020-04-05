@@ -16,6 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+/**
+ * Tests testing the {@link GsonProvider} class
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {GsonProvider.class})
 public class GsonProviderTests {
@@ -23,6 +26,9 @@ public class GsonProviderTests {
   @Autowired
   GsonProvider gsonProvider;
 
+  /**
+   * User entity should be loaded fine from a string
+   */
   @Test
   public void userShouldBeLoaded() {
     Gson gson = gsonProvider.getGson();
@@ -30,6 +36,9 @@ public class GsonProviderTests {
     assertNotNull(user);
   }
 
+  /**
+   * Organization entity should be loaded fine from a string
+   */
   @Test
   public void organizationShouldBeLoaded() {
     Gson gson = gsonProvider.getGson();
@@ -37,6 +46,9 @@ public class GsonProviderTests {
     assertNotNull(org);
   }
 
+  /**
+   * Ticket entity should be loaded fine from a string
+   */
   @Test
   public void ticketShouldBeLoaded() {
     Gson gson = gsonProvider.getGson();
@@ -44,6 +56,9 @@ public class GsonProviderTests {
     assertNotNull(ticket);
   }
 
+  /**
+   * User id should not be zero
+   */
   @Test
   public void userIdShouldNotBeZero() {
     Gson gson = gsonProvider.getGson();
@@ -51,6 +66,9 @@ public class GsonProviderTests {
     assertNotEquals(0, user.getId());
   }
 
+  /**
+   * A ticket loaded date should match the real date given
+   */
   @Test
   public void ticketDateShouldBeLoadedProperly() {
     Gson gson = gsonProvider.getGson();

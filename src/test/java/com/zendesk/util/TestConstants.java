@@ -1,5 +1,8 @@
 package com.zendesk.util;
 
+/**
+ * Class containing some useful constants used for testing
+ */
 public class TestConstants {
 
   public final static String USERS_FILE_PATH = "test-resources/users.json";

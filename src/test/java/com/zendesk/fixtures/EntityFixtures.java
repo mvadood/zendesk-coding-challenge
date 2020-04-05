@@ -8,6 +8,9 @@ import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Provides simple fixtures for each {@link com.zendesk.model.entity.Entity}
+ */
 public class EntityFixtures {
 
   public static User user;
