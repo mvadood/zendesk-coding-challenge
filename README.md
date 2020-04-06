@@ -123,6 +123,7 @@ The inverted index was implemented using simple Java Maps. The whole application
 3. A simple stress test is also included where an arbitrary number of tickets can be generated all at once (with the help of [Mockneat]([https://github.com/nomemory/mockneat](https://github.com/nomemory/mockneat))) and given to the shell. This can be used to see where the breaking point of the app is.
 To do that, go to `src/test/java/com/zendesk/stress/StressTests.java`, tweak `numTickets` and do `mvn test` to run it.
 4. To search for empty values, use `search entity_name field_name ""`
+5. This problem could be resolved with more simplicity and probably less tech involved. Anyway, Using different frameworks such as spring were more used to serve as a showcase to what can be achieved in the real world and in a production environment.
 ## Assumptions
 1. Users, tickets and organizations all have unique ids.
 2. All three files need to be provided. (If only one is provided, the other two ones will be loaded from the default files)
