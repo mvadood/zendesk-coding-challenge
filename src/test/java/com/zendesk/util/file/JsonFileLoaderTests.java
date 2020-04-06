@@ -2,6 +2,7 @@ package com.zendesk.util.file;
 
 import static junit.framework.TestCase.assertEquals;
 
+import com.google.common.io.Resources;
 import com.zendesk.model.entity.Organization;
 import com.zendesk.model.entity.Ticket;
 import com.zendesk.model.entity.User;
@@ -39,8 +40,8 @@ public class JsonFileLoaderTests {
   @Test
   public void usersCountShouldMatch75() throws IOException {
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-    URL resource = classLoader.getResource(TestConstants.USERS_FILE_PATH);
-    Iterator<User> iterator = usersJsonFileReader.getIterator(resource.getPath(), User.class);
+    Iterator<User> iterator = usersJsonFileReader
+        .getIterator(classLoader.getResourceAsStream(TestConstants.USERS_FILE_PATH), User.class);
 
     AtomicInteger size = new AtomicInteger();
     iterator.forEachRemaining(o -> size.getAndIncrement());
@@ -54,9 +55,9 @@ public class JsonFileLoaderTests {
   @Test
   public void orgsCountShouldMatch25() throws IOException {
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-    URL resource = classLoader.getResource(TestConstants.ORGS_FILE_PATH);
     Iterator<Organization> iterator = orgsJsonFileReader
-        .getIterator(resource.getPath(), Organization.class);
+        .getIterator(classLoader.getResourceAsStream(TestConstants.ORGS_FILE_PATH),
+            Organization.class);
 
     AtomicInteger size = new AtomicInteger();
     iterator.forEachRemaining(o -> size.getAndIncrement());
@@ -69,8 +70,9 @@ public class JsonFileLoaderTests {
   @Test
   public void ticketsCountShouldMatch200() throws IOException {
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-    URL resource = classLoader.getResource(TestConstants.TICKETS_FILE_PATH);
-    Iterator<Ticket> iterator = ticketsJsonFileReader.getIterator(resource.getPath(), Ticket.class);
+    Iterator<Ticket> iterator = ticketsJsonFileReader
+        .getIterator(classLoader.getResourceAsStream(TestConstants.TICKETS_FILE_PATH),
+            Ticket.class);
 
     AtomicInteger size = new AtomicInteger();
     iterator.forEachRemaining(o -> size.getAndIncrement());

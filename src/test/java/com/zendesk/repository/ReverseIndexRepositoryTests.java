@@ -150,9 +150,9 @@ public class ReverseIndexRepositoryTests {
   private void loadUpIndex(ReverseIndexRepository reverseIndexRepository) throws IOException {
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
     reverseIndexRepository
-        .loadIndex(classLoader.getResource(TestConstants.USERS_FILE_PATH).getPath(),
-            classLoader.getResource(TestConstants.ORGS_FILE_PATH).getPath(),
-            classLoader.getResource(TestConstants.TICKETS_FILE_PATH).getPath());
+        .loadIndex(classLoader.getResourceAsStream(TestConstants.USERS_FILE_PATH),
+            classLoader.getResourceAsStream(TestConstants.ORGS_FILE_PATH),
+            classLoader.getResourceAsStream(TestConstants.TICKETS_FILE_PATH));
 
   }
 

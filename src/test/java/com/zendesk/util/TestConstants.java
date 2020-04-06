@@ -5,9 +5,9 @@ package com.zendesk.util;
  */
 public class TestConstants {
 
-  public final static String USERS_FILE_PATH = "test-resources/users.json";
+  public final static String USERS_FILE_PATH = "users_default.json";
 
-  public final static String ORGS_FILE_PATH = "test-resources/organizations.json";
+  public final static String ORGS_FILE_PATH = "organizations_default.json";
 
-  public final static String TICKETS_FILE_PATH = "test-resources/tickets.json";
+  public final static String TICKETS_FILE_PATH = "tickets_default.json";
 }

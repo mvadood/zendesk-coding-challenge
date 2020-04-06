@@ -52,9 +52,9 @@ public class ProcessorTests {
     processor = new Processor(reverseIndexRepository);
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
-    processor.loadUpRepo(classLoader.getResource(TestConstants.USERS_FILE_PATH).getPath(),
-        classLoader.getResource(TestConstants.ORGS_FILE_PATH).getPath(),
-        classLoader.getResource(TestConstants.TICKETS_FILE_PATH).getPath());
+    processor.loadUpRepo(classLoader.getResourceAsStream(TestConstants.USERS_FILE_PATH),
+        classLoader.getResourceAsStream(TestConstants.ORGS_FILE_PATH),
+        classLoader.getResourceAsStream(TestConstants.TICKETS_FILE_PATH));
   }
 
   /**

@@ -14,11 +14,13 @@ import com.zendesk.util.Constants;
 import java.lang.reflect.Type;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 /**
  * Class which processes and validates the input entered by the user for a search query
  */
+@Slf4j
 @Component
 public class SearchInputProcessor {
 
@@ -35,6 +37,8 @@ public class SearchInputProcessor {
       }
       return convertTo(value, fieldType);
     } catch (Exception ex) {
+      log.warn("User input for field {} of value {} was not in the right format", fieldName,
+          value, ex);
       throw new InvalidValueTypeException(ex);
     }
   }
@@ -102,14 +106,6 @@ public class SearchInputProcessor {
             .contains(fieldName)) ||
         (entityType.equals(Ticket.class) && !TicketField.getFieldsList().contains(fieldName))) {
       throw new NotSupportedFieldException();
-    }
-  }
-
-  public String convertFieldKeyString(String fieldName) {
-    if (fieldName.equals("_id")) {
-      return "id";
-    } else {
-      return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, fieldName);
     }
   }
 

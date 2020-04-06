@@ -11,6 +11,10 @@
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
 
+  <properties>
+    <start-class>com.zendesk.Main</start-class>
+  </properties>
+
   <groupId>com.zendesk</groupId>
   <artifactId>coding-challenge</artifactId>
   <version>1.0-SNAPSHOT</version>
@@ -105,34 +109,12 @@
           <target>11</target>
         </configuration>
       </plugin>
-
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>3.1.0</version>
-        <executions>
-          <execution>
-            <id>copy-test-resources</id>
-            <!-- here the phase you need -->
-            <phase>validate</phase>
-            <goals>
-              <goal>testResources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${basedir}/target/classes/test-resources</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${project.basedir}/src/test/files</directory>
-                  <filtering>true</filtering>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <mainClass>com.zendesk.Main</mainClass>
+        </configuration>
       </plugin>
     </plugins>
 

@@ -31,15 +31,14 @@ public class JsonFileReader<T> extends FileLoader<T> {
   /**
    * Loads content of a json file into an iterator of objects of type `typeOfT`
    *
-   * @param filePath path to the json file
+   * @param inputStream input stream pointing to the file
    * @param typeOfT type of object the file content should be translated into an iterator of
    * @return an iterator of type typeOfT which can be used to load an index
    * @throws IOException if there is a problem loading from a file
    */
   @Override
-  public Iterator<T> getIterator(String filePath, Type typeOfT)
+  public Iterator<T> getIterator(InputStream inputStream, Type typeOfT)
       throws IOException {
-    InputStream inputStream = new FileInputStream(filePath);
     JsonReader reader = new JsonReader(new InputStreamReader(inputStream,
         StandardCharsets.UTF_8));
 

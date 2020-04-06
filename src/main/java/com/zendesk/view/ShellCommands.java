@@ -17,11 +17,16 @@ import com.zendesk.model.request.UserField;
 import com.zendesk.model.response.Response;
 import com.zendesk.model.response.ResponseItem;
 import com.zendesk.processor.Processor;
+import com.zendesk.util.Util;
 import com.zendesk.view.presentation.ResponseDrawer;
 import de.vandermeer.asciitable.AsciiTable;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -30,12 +35,13 @@ import org.springframework.shell.standard.ShellOption;
 /**
  * Class containing the shell commands that can be run
  */
+@Slf4j
 @ShellComponent
 public class ShellCommands {
 
-  public static final String DEFAULT_USERS_FILE_PATH = "users.json";
-  public static final String DEFAULT_ORGS_FILE_PATH = "organizations.json";
-  public static final String DEFAULT_TICKETS_FILE_PATH = "tickets.json";
+  public static final String DEFAULT_USERS_FILE_PATH = "users_default.json";
+  public static final String DEFAULT_ORGS_FILE_PATH = "organizations_default.json";
+  public static final String DEFAULT_TICKETS_FILE_PATH = "tickets_default.json";
 
   private boolean indexLoaded = false;
   private Processor processor;
@@ -71,18 +77,26 @@ public class ShellCommands {
       throws IOException {
     processor.clear();
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+    InputStream usersInputStream, orgsInputStream, ticketsInputStream;
 
     if (users.equals(DEFAULT_USERS_FILE_PATH)) {
-      users = classLoader.getResource(DEFAULT_USERS_FILE_PATH).getPath();
+      usersInputStream = classLoader.getResourceAsStream(DEFAULT_USERS_FILE_PATH);
+    } else {
+      usersInputStream = new FileInputStream(new File(users));
     }
     if (organizations.equals(DEFAULT_ORGS_FILE_PATH)) {
-      organizations = classLoader.getResource(DEFAULT_ORGS_FILE_PATH).getPath();
+      orgsInputStream = classLoader.getResourceAsStream(DEFAULT_ORGS_FILE_PATH);
+    } else {
+      orgsInputStream = new FileInputStream(new File(organizations));
     }
     if (tickets.equals(DEFAULT_TICKETS_FILE_PATH)) {
-      tickets = classLoader.getResource(DEFAULT_TICKETS_FILE_PATH).getPath();
+      ticketsInputStream = classLoader.getResourceAsStream(DEFAULT_TICKETS_FILE_PATH);
+    } else {
+      ticketsInputStream = new FileInputStream(new File(tickets));
     }
 
-    processor.loadUpRepo(users, organizations, tickets);
+    processor.loadUpRepo(usersInputStream, orgsInputStream, ticketsInputStream);
+    log.trace("{} and {} and {} files were loaded into the index", users, organizations, tickets);
     indexLoaded = true;
     return "Great! Index was loaded. Now you can start searching by using the search command";
   }
@@ -165,7 +179,7 @@ public class ShellCommands {
       Type entityType = searchInputProcessor.getSearchEntity(entity);
       searchInputProcessor.checkIfFieldExists(entityType, field);
       Object convertedValue = searchInputProcessor.validateAndConvert(entityType, field, value);
-      String convertedField = searchInputProcessor.convertFieldKeyString(field);
+      String convertedField = Util.convertFieldKeyString(field);
 
       Response<? extends ResponseItem> response;
       if (entityType.equals(User.class)) {
@@ -177,26 +191,39 @@ public class ShellCommands {
         response = processor.lookupTicket(convertedField, convertedValue);
       }
 
+      log.trace("{} search for field {} and value {} yielded {} results",
+          entity, field, value, response.getResponseItems().size());
       return responseDrawer.draw(response, entity);
 
 
-    } catch (NotSupportedEntityTypeException notSupportedEntityTypeException) {
+    } catch (NotSupportedEntityTypeException e) {
+      log.warn("User input for entity {} can not be processed", entity, e);
       return String.format(
           "'%s' is not a supported entity. Please choose among 'user', 'organization' and 'ticket'",
           entity);
     } catch (NotSupportedFieldException e) {
+      log.warn("User input for field {} and entity can not be processed", field, entity, e);
       return String.format(
           "'%s' is not a supported field for '%s'. Please see the list of full supported fields by running the 'fields' command",
           field, entity);
     } catch (InvalidValueTypeException e) {
+      log.warn(
+          "User input for entity {}, field {} and value {} can not be processed since the value is not in the right format",
+          entity, field, value, e);
       return String.format(
           "'%s' is not a supported value for field '%s'. Please see the list of full supported fields and their types by running the 'fields' command",
           value, field);
     } catch (NoUsersFoundException e) {
+      log.trace("User search for field {} and value {} yielded no results",
+          field, value);
       return "No users were found!";
     } catch (NoTicketsFoundException e) {
+      log.trace("Ticket search for field {} and value {} yielded no results",
+          field, value);
       return "No tickets were found!";
     } catch (NoOrgsFoundException e) {
+      log.trace("Organizations search field {} and value {} yielded no results",
+          field, value);
       return "No organizations were found!";
     }
   }

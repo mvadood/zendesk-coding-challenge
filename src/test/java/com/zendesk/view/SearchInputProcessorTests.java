@@ -6,6 +6,7 @@ import com.zendesk.exception.input.NotSupportedEntityTypeException;
 import com.zendesk.exception.input.NotSupportedFieldException;
 import com.zendesk.model.entity.User;
 import com.zendesk.model.request.UserField;
+import com.zendesk.util.Util;
 import java.lang.reflect.Type;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -67,7 +68,7 @@ public class SearchInputProcessorTests {
    */
   @Test
   public void fieldKeyTranslationShouldReturnCamelCase() {
-    assertEquals("createdAt", searchInputProcessor.convertFieldKeyString("created_at"));
+    assertEquals("createdAt", Util.convertFieldKeyString("created_at"));
   }
 
 }

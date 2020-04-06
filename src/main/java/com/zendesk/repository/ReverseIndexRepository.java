@@ -12,8 +12,11 @@ import com.zendesk.model.entity.Organization;
 import com.zendesk.model.entity.Ticket;
 import com.zendesk.model.entity.User;
 import com.zendesk.model.request.TicketField;
+import com.zendesk.model.request.UserField;
+import com.zendesk.util.Util;
 import com.zendesk.util.file.JsonFileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -21,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -31,6 +35,7 @@ import org.springframework.stereotype.Repository;
  * @see <a href="https://www.geeksforgeeks.org/inverted-index</a>
  * </p>
  */
+@Slf4j
 @Repository
 public class ReverseIndexRepository {
 
@@ -76,26 +81,29 @@ public class ReverseIndexRepository {
     usersIndex = new HashMap<>();
     orgsIndex = new HashMap<>();
     ticketsIndex = new HashMap<>();
+    log.info("Inverted index repository was cleared");
   }
 
   /**
    * Loads up the index from input json files
    *
-   * @param usersFilePath path to the users file
-   * @param orgsFilePath path to the organizations file
-   * @param ticketsFilePath path to the tickets file
+   * @param usersInputStream input stream pointing to the users file
+   * @param orgsInputStream input stream pointing to the organizations file
+   * @param ticketsInputStream input stream pointing to the tickets file
    * @throws IOException in case there was an issue loading the files
    */
-  public void loadIndex(String usersFilePath, String orgsFilePath,
-      String ticketsFilePath) throws IOException {
-    Iterator<User> usersIterator = usersfileLoader.getIterator(usersFilePath, User.class);
+  public void loadIndex(InputStream usersInputStream, InputStream orgsInputStream,
+      InputStream ticketsInputStream) throws IOException {
+    Iterator<User> usersIterator = usersfileLoader.getIterator(usersInputStream, User.class);
     Iterator<Organization> orgsIterator = orgsfileLoader
-        .getIterator(orgsFilePath, Organization.class);
-    Iterator<Ticket> ticketsIterator = ticketsfileLoader.getIterator(ticketsFilePath, Ticket.class);
+        .getIterator(orgsInputStream, Organization.class);
+    Iterator<Ticket> ticketsIterator = ticketsfileLoader
+        .getIterator(ticketsInputStream, Ticket.class);
 
     populateMaps(usersIterator, users, usersIndex);
     populateMaps(orgsIterator, organizations, orgsIndex);
     populateMaps(ticketsIterator, tickets, ticketsIndex);
+    log.info("Inverted index repository was loaded successfully");
   }
 
   /**
@@ -165,8 +173,17 @@ public class ReverseIndexRepository {
    * @param entity the entity that is going to be converted
    */
   Map<String, Object> buildEntityKeyValues(Entity entity) {
-    return objectMapper.convertValue(entity, new TypeReference<>() {
+    Map<String, Object> keyValues = objectMapper.convertValue(entity, new TypeReference<>() {
     });
+
+    UserField.getFieldsList().stream().map(Util::convertFieldKeyString).forEach(field ->
+        {
+          if (!keyValues.containsKey(field)) {
+            keyValues.put(field, null);
+          }
+        }
+    );
+    return keyValues;
   }
 
   /**
@@ -178,6 +195,7 @@ public class ReverseIndexRepository {
    * @throws com.zendesk.exception.NoTicketsFoundException in case there were not tickets found
    */
   public List<Ticket> searchTicket(String field, Object value) throws NoTicketsFoundException {
+    log.trace(String.format("Ticket search was issued for (%s,%s)", field, value));
     List<String> ticketIds = ticketsIndex.get(field).get(value);
     if (ticketIds == null) {
       throw new NoTicketsFoundException();
@@ -195,6 +213,7 @@ public class ReverseIndexRepository {
    * @throws com.zendesk.exception.NoOrgsFoundException case there were not organizations found
    */
   public List<Organization> searchOrg(String field, Object value) throws NoOrgsFoundException {
+    log.trace(String.format("Organization search was issued for (%s,%s)", field, value));
     List<String> orgIds = orgsIndex.get(field).get(value);
     if (orgIds == null) {
       throw new NoOrgsFoundException();
@@ -212,6 +231,7 @@ public class ReverseIndexRepository {
    * @throws com.zendesk.exception.NoUsersFoundException case there were not users found
    */
   public List<User> searchUser(String field, Object value) throws NoUsersFoundException {
+    log.trace(String.format("User search was issued for (%s,%s)", field, value));
     List<String> userIds = usersIndex.get(field).get(value);
     if (userIds == null) {
       throw new NoUsersFoundException();

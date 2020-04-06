@@ -12,7 +12,9 @@ import com.zendesk.model.response.TicketResponseItem;
 import com.zendesk.model.response.UserResponseItem;
 import com.zendesk.repository.ReverseIndexRepository;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Component;
  * com.zendesk.repository.ReverseIndexRepository}. It also takes care of the search
  * </p>
  */
+@Slf4j
 @Component
 public class Processor {
 
@@ -42,13 +45,14 @@ public class Processor {
   /**
    * Loads up the index from input json files
    *
-   * @param usersFilePath path to the users file
-   * @param orgsFilePath path to the organizations file
-   * @param ticketsFilePath path to the tickets file
+   * @param usersInputStream input stream pointing to the users file
+   * @param orgsInputStream input stream pointing to the organizations file
+   * @param ticketsInputStream input stream pointing to the tickets file
    */
-  public void loadUpRepo(String usersFilePath, String orgsFilePath, String ticketsFilePath)
+  public void loadUpRepo(InputStream usersInputStream, InputStream orgsInputStream,
+      InputStream ticketsInputStream)
       throws IOException {
-    reverseIndexRepository.loadIndex(usersFilePath, orgsFilePath, ticketsFilePath);
+    reverseIndexRepository.loadIndex(usersInputStream, orgsInputStream, ticketsInputStream);
   }
 
   /**
@@ -63,6 +67,7 @@ public class Processor {
    */
   public Response<TicketResponseItem> lookupTicket(String field, Object value)
       throws NoTicketsFoundException {
+    log.trace("Ticket search query was received with (%s,%s)", field, value);
     Response<TicketResponseItem> response = new Response<>();
 
     List<Ticket> tickets = reverseIndexRepository.searchTicket(field, value);
@@ -72,18 +77,25 @@ public class Processor {
       try {
         ticketResponseItem.setOrg(reverseIndexRepository.searchOrgById(ticket.getOrganizationId()));
       } catch (NoOrgsFoundException e) {
+        log.trace("No organizations with id={} were found for ticket {}",
+            ticket.getOrganizationId(), ticket.getId(), e);
         ticketResponseItem.setOrg(null);
       }
       try {
         ticketResponseItem
             .setSubmitter(reverseIndexRepository.searchUserById(ticket.getSubmitterId()));
       } catch (NoUsersFoundException e) {
+        log.trace("No submitter users with id=%s were found for ticket {}",
+            ticket.getSubmitterId(), ticket.getId(), e);
         ticketResponseItem.setSubmitter(null);
       }
       try {
         ticketResponseItem
             .setAssignee(reverseIndexRepository.searchUserById(ticket.getAssigneeId()));
       } catch (NoUsersFoundException e) {
+        log.trace(
+            "No assignee users with id={} were found for ticket {}", ticket.getAssigneeId(),
+            ticket.getId(), e);
         ticketResponseItem.setAssignee(null);
       }
       response.addResponseItem(ticketResponseItem);
@@ -102,6 +114,7 @@ public class Processor {
    */
   public Response<OrgResponseItem> lookupOrg(String field, Object value)
       throws NoOrgsFoundException {
+    log.trace("Organization search query was received with ({},{})", field, value);
     Response<OrgResponseItem> response = new Response<>();
 
     List<Organization> orgs = reverseIndexRepository.searchOrg(field, value);
@@ -112,11 +125,13 @@ public class Processor {
       try {
         orgResponseItem.setOrgUsers(reverseIndexRepository.searchUserByOrgId(org.getId()));
       } catch (NoUsersFoundException e) {
+        log.trace("No users were found for organization {}", org.getId(), e);
         orgResponseItem.setOrgUsers(null);
       }
       try {
         orgResponseItem.setOrgTickets(reverseIndexRepository.searchTicketByOrgId(org.getId()));
       } catch (NoTicketsFoundException e) {
+        log.trace("No tickets were found for organization {}", org.getId(), e);
         orgResponseItem.setOrgTickets(null);
       }
       response.addResponseItem(orgResponseItem);
@@ -147,18 +162,21 @@ public class Processor {
         userResponseItem
             .setSubmittedTickets(reverseIndexRepository.searchTicketBySubmitterId(user.getId()));
       } catch (NoTicketsFoundException e) {
+        log.trace("No submitted tickets were found for user {}", user.getId(), e);
         userResponseItem.setSubmittedTickets(null);
       }
       try {
         userResponseItem
             .setAssigneeTickets(reverseIndexRepository.searchTicketByAssigneeId(user.getId()));
       } catch (NoTicketsFoundException e) {
+        log.trace("No assigned tickets were found for user {}", user.getId(), e);
         userResponseItem.setAssigneeTickets(null);
       }
       try {
         userResponseItem
             .setOrganization(reverseIndexRepository.searchOrgById(user.getOrganizationId()));
       } catch (NoOrgsFoundException e) {
+        log.trace("No organizations were found for user {}", user.getId(), e);
         userResponseItem.setOrganization(null);
       }
 
