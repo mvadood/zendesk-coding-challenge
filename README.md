@@ -5,7 +5,7 @@
 * [How it All Works](#how-it-all-works)
 * [Some Notes](#some-notes)
 * [Assumptions](#assumptions)
-* [Limitation](#limitations)
+* [Limitations](#limitations)
 
 ## Quickstart
 The easiest way to run this command line tool is by [docker]([https://www.docker.com/](https://www.docker.com/)).
@@ -30,7 +30,7 @@ The easiest way to run this command line tool is by [docker]([https://www.docker
 ```
 > shell:> load
 ```
-* In case you want to load your own files, first copy your files into `{host-directory-path}` you entered before and then do `load /app/resources/{users-file-name} /app/resources/{orgs-file-name}/app/resources/{tickets-file-name}`
+* In case you want to load your own files, first copy your files into `{host-directory-path}` you entered before and then do `load /app/resources/{users-file-name} /app/resources/{orgs-file-name} /app/resources/{tickets-file-name}`
 6. Search!
 ```
 > shell:> search user _id "2"
